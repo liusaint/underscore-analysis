@@ -1368,6 +1368,7 @@
 	// Creates an object that inherits from the given prototype object.
 	// If additional properties are provided then they will be added to the
 	// created object.
+	// 创建具有给定原型的新对象， 可选附加props 作为 own的属性。
 	_.create = function(prototype, props) {
 		var result = baseCreate(prototype);
 		if (props) _.extendOwn(result, props);
@@ -1405,6 +1406,7 @@
 
 
 	// Internal recursive comparison function for `isEqual`.
+	// 内部的递归比较方法。
 	var eq, deepEq;
 	eq = function(a, b, aStack, bStack) {
 		// Identical objects are equal. `0 === -0`, but they aren't identical.
@@ -1518,6 +1520,8 @@
 
 	// Is a given array, string, or object empty?
 	// An "empty" object has no enumerable own-properties.
+	// 检测数组或对象是否为空。
+	// 空obj是无自有属性。
 	_.isEmpty = function(obj) {
 		if (obj == null) return true;
 		if (isArrayLike(obj) && (_.isArray(obj) || _.isString(obj) || _.isArguments(obj))) return obj.length === 0;
