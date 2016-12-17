@@ -210,7 +210,7 @@
 			return obj == null ? void 0 : obj[key];
 		};
 	};
-	//???
+	//获取某个路径的值。
 	var deepGet = function(obj, path) {
 		var length = path.length;
 		for (var i = 0; i < length; i++) {
@@ -1529,6 +1529,7 @@
 	};
 
 	// Is a given value a DOM element?
+	// 判断是否dom节点
 	_.isElement = function(obj) {
 		return !!(obj && obj.nodeType === 1);
 	};
@@ -1635,6 +1636,7 @@
 
 	// Run Underscore.js in *noConflict* mode, returning the `_` variable to its
 	// previous owner. Returns a reference to the Underscore object.
+	// 放弃对_的使用。 var underscore = _.noConflict
 	_.noConflict = function() {
 		root._ = previousUnderscore;
 		return this;
@@ -1647,6 +1649,7 @@
 	};
 
 	// Predicate-generating functions. Often useful outside of Underscore.
+	// 返回一个返回某个值的函数。某个常量。
 	_.constant = function(value) {
 		return function() {
 			return value;
@@ -1655,6 +1658,7 @@
 
 	_.noop = function() {};
 
+	//直接返回某个属性的值或某个路径的值。
 	_.property = function(path) {
 		if (!_.isArray(path)) {
 			return shallowProperty(path);
@@ -1665,6 +1669,7 @@
 	};
 
 	// Generates a function for a given object that returns a given property.
+	// 生成一个函数用来查找某obj中的某个属性或路径。
 	_.propertyOf = function(obj) {
 		if (obj == null) {
 			return function() {};
@@ -1685,6 +1690,7 @@
 	};
 
 	// Run a function **n** times.
+	// 执行n次某个函数。每次都会传入序号。
 	_.times = function(n, iteratee, context) {
 		var accum = Array(Math.max(0, n));
 		iteratee = optimizeCb(iteratee, context, 1);
@@ -1705,11 +1711,13 @@
 
 
 	// A (possibly faster) way to get the current timestamp as an integer.
+	// 获取当前的时间戳
 	_.now = Date.now || function() {
 		return new Date().getTime();
 	};
 
 	// List of HTML entities for escaping.
+	// html字符转换
 	var escapeMap = {
 		'&': '&amp;',
 		'<': '&lt;',
@@ -1718,17 +1726,22 @@
 		"'": '&#x27;',
 		'`': '&#x60;'
 	};
+	//调换
 	var unescapeMap = _.invert(escapeMap);
 
 	// Functions for escaping and unescaping strings to/from HTML interpolation.
+	// html转义或反转义的函数。
 	var createEscaper = function(map) {
 		var escaper = function(match) {
 			return map[match];
 		};
 		// Regexes for identifying a key that needs to be escaped.
+		// 正则识别需要转义的字符。???
 		var source = '(?:' + _.keys(map).join('|') + ')';
+
 		var testRegexp = RegExp(source);
 		var replaceRegexp = RegExp(source, 'g');
+				console.log(source,testRegexp,replaceRegexp);
 		return function(string) {
 			string = string == null ? '' : '' + string;
 			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
@@ -1736,6 +1749,11 @@
 	};
 	_.escape = createEscaper(escapeMap);
 	_.unescape = createEscaper(unescapeMap);
+
+
+	testFun(function(){
+			return _.escape('Curly, Larry & Moe');
+	})();
 
 	// Traverses the children of `obj` along `path`. If a child is a function, it
 	// is invoked with its parent as context. Returns the value of the final
