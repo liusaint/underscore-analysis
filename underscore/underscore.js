@@ -1737,11 +1737,12 @@
 		};
 		// Regexes for identifying a key that needs to be escaped.
 		// 正则识别需要转义的字符。???
+		// replace第二个参数可以是函数。
 		var source = '(?:' + _.keys(map).join('|') + ')';
 
 		var testRegexp = RegExp(source);
 		var replaceRegexp = RegExp(source, 'g');
-				console.log(source,testRegexp,replaceRegexp);
+				console.log(replaceRegexp,typeof testRegexp);
 		return function(string) {
 			string = string == null ? '' : '' + string;
 			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
@@ -1751,13 +1752,16 @@
 	_.unescape = createEscaper(unescapeMap);
 
 
-	testFun(function(){
-			return _.escape('Curly, Larry & Moe');
-	})();
+	// testFun(function(){
+	// 		return _.escape('Curly, Larry & Moe');
+	// })();
 
 	// Traverses the children of `obj` along `path`. If a child is a function, it
 	// is invoked with its parent as context. Returns the value of the final
 	// child, or `fallback` if any child is undefined.
+	// 如果指定的property 的值是一个函数，那么将在object上下文内调用它;否则，返回它。
+	// 如果提供默认值，并且属性不存在，那么默认值将被返回。
+	// 如果设置defaultValue是一个函数，它的结果将被返回。
 	_.result = function(obj, path, fallback) {
 		if (!_.isArray(path)) path = [path];
 		var length = path.length;
@@ -1777,6 +1781,7 @@
 
 	// Generate a unique integer id (unique within the entire client session).
 	// Useful for temporary DOM ids.
+	// 生成一个全局的id。有前缀就加前缀。居然用了个全局变量。
 	var idCounter = 0;
 	_.uniqueId = function(prefix) {
 		var id = ++idCounter + '';
@@ -1785,6 +1790,9 @@
 
 	// By default, Underscore uses ERB-style template delimiters, change the
 	// following template settings to use alternative delimiters.
+	// 
+	// 默认使用erb风格。可通过修改设置其他替代风格的。
+	// 1.eval 2.插值 3.转义
 	_.templateSettings = {
 		evaluate: /<%([\s\S]+?)%>/g,
 		interpolate: /<%=([\s\S]+?)%>/g,
@@ -1794,6 +1802,7 @@
 	// When customizing `templateSettings`, if you don't want to define an
 	// interpolation, evaluation or escaping regex, we need one that is
 	// guaranteed not to match.
+	// 自定义的时候，如果你不需要某个功能的正则。也需要有一个默认的来match。来保证功能正常。
 	var noMatch = /(.)^/;
 
 	// Certain characters need to be escaped so that they can be put into a
