@@ -1081,6 +1081,7 @@
 	// be triggered. The function will be called after it stops being called for
 	// N milliseconds. If `immediate` is passed, trigger the function on the
 	// leading edge, instead of the trailing.
+	// 防抖动
 	_.debounce = function(func, wait, immediate) {
 		var timeout, result;
 
@@ -1127,6 +1128,7 @@
 
 	// Returns a function that is the composition of a list of functions, each
 	// consuming the return value of the function that follows.
+	// 从后往前，后一个结果作前一个的参数。
 	_.compose = function() {
 		var args = arguments;
 		var start = args.length - 1;
