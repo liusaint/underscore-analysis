@@ -944,7 +944,10 @@
 
 	// Determines whether to execute a function as a constructor
 	// or a normal function with the provided arguments.
+	// 决定按构造器还是按普通函数执行。
+
 	var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
+		// 如果callingContext不是boundFunc的实例。运行sourceFunc.
 		if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
 		var self = baseCreate(sourceFunc.prototype);
 		var result = sourceFunc.apply(self, args);
@@ -957,11 +960,14 @@
 	// available.
 	_.bind = restArgs(function(func, context, args) {
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-		var bound = restArgs(function(callArgs) {
+		var bound = restArgs(function(callArgs) {			
 			return executeBound(func, bound, context, this, args.concat(callArgs));
-		});
+		});		
 		return bound;
 	});
+
+
+
 
 	// Partially apply a function by creating a version that has had some of its
 	// arguments pre-filled, without changing its dynamic `this` context. _ acts
@@ -987,6 +993,7 @@
 	// Bind a number of an object's methods to that object. Remaining arguments
 	// are the method names to be bound. Useful for ensuring that all callbacks
 	// defined on an object belong to it.
+	// 将方法绑定到obj上
 	_.bindAll = restArgs(function(obj, keys) {
 		keys = flatten(keys, false, false);
 		var index = keys.length;
@@ -998,6 +1005,7 @@
 	});
 
 	// Memoize an expensive function by storing its results.
+	// 缓存结果
 	_.memoize = function(func, hasher) {
 		var memoize = function(key) {
 			var cache = memoize.cache;
@@ -1011,6 +1019,7 @@
 
 	// Delays a function for the given number of milliseconds, and then calls
 	// it with the arguments supplied.
+	// 延迟执行。
 	_.delay = restArgs(function(func, wait, args) {
 		return setTimeout(function() {
 			return func.apply(null, args);
@@ -1019,6 +1028,7 @@
 
 	// Defers a function, scheduling it to run after the current call stack has
 	// cleared.
+	// 相当于 timeout0
 	_.defer = _.partial(_.delay, _, 1);
 
 	// Returns a function, that, when invoked, will only be triggered at most once
@@ -1831,6 +1841,7 @@
 		settings = _.defaults({}, settings, _.templateSettings);
 
 		// Combine delimiters into one regular expression via alternation.
+		// 分隔符处理。
 		var matcher = RegExp([
 			(settings.escape || noMatch).source,
 			(settings.interpolate || noMatch).source,
@@ -1961,6 +1972,8 @@
 			return _;
 		});
 	}
+
+
 }());
 
 
