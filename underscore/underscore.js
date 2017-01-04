@@ -1838,7 +1838,9 @@
 	// Underscore templating handles arbitrary delimiters, preserves whitespace,
 	// and correctly escapes quotes within interpolated code.
 	// NB: `oldSettings` only exists for backwards compatibility.
+	// 模板引擎
 	_.template = function(text, settings, oldSettings) {
+		//参数提前
 		if (!settings && oldSettings) settings = oldSettings;
 		settings = _.defaults({}, settings, _.templateSettings);
 
