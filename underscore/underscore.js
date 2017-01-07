@@ -1900,6 +1900,7 @@
 
 	// Add a "chain" function. Start chaining a wrapped Underscore object.
 	_.chain = function(obj) {
+		debugger;
 		var instance = _(obj);
 		instance._chain = true;
 		return instance;
@@ -1981,9 +1982,9 @@
 }());
 
 
-_ = exports._;
+// _ = exports._;
 
-var log = function(v) {
-		console.log(v);
-	}
-	// _.each([1, 2, 3], log);
+// var log = function(v) {
+// 		console.log(v);
+// 	}
+// 	// _.each([1, 2, 3], log);
