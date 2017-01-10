@@ -20,7 +20,9 @@
 		this;
 
 	// Save the previous value of the `_` variable.
-	// 保存之前的_变量的值。
+	// 保存之前的_变量的值。用于无冲突处理。
+	// 因为我们要占用_这个全局变量。但是原来全局中可能已经有了这个变量。所以我们先把这个变量保存起来。
+	// 当我们调用_.noConflict的时候，可以放弃本库对_的占用，使用其他的变量来代替。并且把_原来的值得还给全局。
 	var previousUnderscore = root._;
 
 	// Save bytes in the minified (but not gzipped) version:
@@ -50,6 +52,8 @@
 	// Create a safe reference to the Underscore object for use below.
 	// 创建一个安全的underscore对象的引用以便后面使用。
 	// 单例。强制new。
+	// 创建一个_库的实例。
+	// 内部变量。_.chain()会调用它。
 	var _ = function(obj) {
 		if (obj instanceof _) return obj;
 		if (!(this instanceof _)) return new _(obj);
@@ -85,6 +89,7 @@
 	// (`nodeType` is checked to ensure that `module`
 	// and `exports` are not HTML elements.)
 	// 根据使用场景。决定_的暴露方式。
+	// 
 	if (typeof exports != 'undefined' && !exports.nodeType) {
 		if (typeof module != 'undefined' && !module.nodeType && module.exports) {
 			exports = module.exports = _;
@@ -105,6 +110,7 @@
 	// 内部方法。返回一个传入的回调函数的高效率版本函数，以在其他Underscore函数中重复使用。
 	// 这个函数是主要是对一些传入了obj的函数，回调需要绑定在这个obj上运行。
 
+	//为遍历器绑定运行对象。将func中的this绑定到context对象上。
 	var optimizeCb = function(func, context, argCount) {
 		if (context === void 0) return func;
 		switch (argCount) {
@@ -258,7 +264,7 @@
 	};
 
 	// Return the results of applying the iteratee to each element.
-	// 遍历。收集结果返回。
+	// 遍历。收集结果返回。context表示运行环境。表示iteratee遍历器是运行在哪一个对象上的方法。
 	_.map = _.collect = function(obj, iteratee, context) {
 		iteratee = cb(iteratee, context);
 		var keys = !isArrayLike(obj) && _.keys(obj),
@@ -271,6 +277,13 @@
 		return results;
 	};
 
+	// 测试
+	// testFun(function(){
+	// 	return _.map({a:1,b:2,c:3},function(a){
+	// 		return a * this.d;
+	// 	},{d:5});
+	// })()
+	
 	// Create a reducing function iterating left or right.
 	// 返回一个累加。从前往后或从后往前。
 	// dir>0。正向。否则反向。dir为迭代间隔
