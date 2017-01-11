@@ -110,7 +110,8 @@
 	// 内部方法。返回一个传入的回调函数的高效率版本函数，以在其他Underscore函数中重复使用。
 	// 这个函数是主要是对一些传入了obj的函数，回调需要绑定在这个obj上运行。
 
-	//为遍历器绑定运行对象。将func中的this绑定到context对象上。
+	//为遍历器绑定运行对象。将func中的this绑定到context对象上。以及在不同参数个数时的参数约定。
+	//accumulator累加器
 	var optimizeCb = function(func, context, argCount) {
 		if (context === void 0) return func;
 		switch (argCount) {
@@ -135,6 +136,7 @@
 		};
 	};
 
+
 	var builtinIteratee;
 
 	// An internal function to generate callbacks that can be applied to each
@@ -144,9 +146,13 @@
 	var cb = function(value, context, argCount) {
 		//检测iteratee是否被重定义了。？
 		if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
+		//第一个参数null。
 		if (value == null) return _.identity;
+		//第一个参数为函数。返回绑定对象后的函数。
 		if (_.isFunction(value)) return optimizeCb(value, context, argCount);
+		//第一个参数是对象。返回一个函数检测是否含有其键值对。
 		if (_.isObject(value) && !_.isArray(value)) return _.matcher(value);
+		//返回一个函数，这个函数返回任何传入的对象的value属性。
 		return _.property(value);
 	};
 
@@ -216,7 +222,7 @@
 			return obj == null ? void 0 : obj[key];
 		};
 	};
-	//获取某个路径的值。
+	//获取某个路径的值。路径的意思{d:2,a:{b:{c:1}}} 路径：[a,b,c] 值：1.
 	var deepGet = function(obj, path) {
 		var length = path.length;
 		for (var i = 0; i < length; i++) {
