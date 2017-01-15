@@ -294,6 +294,7 @@
 	// 返回一个累加。从前往后或从后往前。
 	// dir>0。正向。否则反向。dir为迭代间隔
 	// memo为初始值。有初始值则从第一个开始遍历。否则从第二个开始遍历。
+	// initial布尔值。是否有初始值。
 	var createReduce = function(dir) {
 		// Wrap code that reassigns argument variables in a separate function than
 		// the one that accesses `arguments.length` to avoid a perf hit. (#1991)
@@ -313,8 +314,10 @@
 			return memo;
 		};
 
+
 		return function(obj, iteratee, memo, context) {
 			var initial = arguments.length >= 3;
+			//这传递过去的绑定好context的遍历器。
 			return reducer(obj, optimizeCb(iteratee, context, 4), memo, initial);
 		};
 	};
