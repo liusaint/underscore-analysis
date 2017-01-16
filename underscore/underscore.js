@@ -298,7 +298,7 @@
 	var createReduce = function(dir) {
 		// Wrap code that reassigns argument variables in a separate function than
 		// the one that accesses `arguments.length` to avoid a perf hit. (#1991)
-		// 把这里分出来。是为了arguments.length可能的问题。？？
+		// 把这里分出来。一是可以先绑定好对象的遍历器，二是判断了一下是否有初始值
 		var reducer = function(obj, iteratee, memo, initial) {
 			var keys = !isArrayLike(obj) && _.keys(obj),
 				length = (keys || obj).length,
