@@ -104,6 +104,8 @@
 	// 版本号
 	_.VERSION = '1.8.3';
 
+	// cb处理的比optimizeCb处理的支持更多类型的参数。
+
 	// Internal function that returns an efficient (for current engines) version
 	// of the passed-in callback, to be repeatedly applied in other Underscore
 	// functions.
@@ -282,6 +284,7 @@
 		}
 		return results;
 	};
+
 
 	// 测试
 	// testFun(function(){
