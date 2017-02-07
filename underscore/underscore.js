@@ -32,7 +32,7 @@
 	var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
 
 	// Create quick reference variables for speed access to core prototypes.
-	// 创建快捷变量以更快地访问这些核心方法。
+	// 创建快捷变量以更快地访问这些核心方法。另一个原因是压缩。
 	var push = ArrayProto.push,
 		slice = ArrayProto.slice,
 		toString = ObjProto.toString,
