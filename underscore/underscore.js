@@ -400,15 +400,20 @@
 
 	// Invoke a method (with arguments) on every item in a collection.
 	// 在list的每个元素上执行methodName方法。 任何传递给invoke的额外参数，invoke都会在调用methodName方法的时候传递给它。
-	// 与_.map的区别在哪？在于可以传入额外的参数？
-	// ???部分没看懂
+//{d:2,a:{b:{c:1}}} 路径：[a,b,c]
+	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], 'sort'));
+	// console.log(_.invoke([{d:2,a:{b:function(a){return a }}}, {d:2,a:{b:function(a){return a+a}}}], ['a','b'],1));
+	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], alert)); error
+
 	_.invoke = restArgs(function(obj, path, args) {
+debugger;
 		var contextPath, func;
 		if (_.isFunction(path)) {
 			func = path;
 		} else if (_.isArray(path)) {
 			//不要最后一位。slice(0, -1)
 			contextPath = path.slice(0, -1);
+			//取最后一位
 			path = path[path.length - 1];
 		}
 		return _.map(obj, function(context) {
@@ -418,6 +423,8 @@
 					context = deepGet(context, contextPath);
 				}
 				if (context == null) return void 0;
+				//比如到这里 context = [2,1,4].path传递的sort.
+				//那么method就等于数组的sort方法 。
 				method = context[path];
 			}
 			return method == null ? method : method.apply(context, args);
