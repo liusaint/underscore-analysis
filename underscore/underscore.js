@@ -292,7 +292,7 @@
 	// 		return a * this.d;
 	// 	},{d:5});
 	// })()
-	
+
 	// Create a reducing function iterating left or right.
 	// 返回一个累加。从前往后或从后往前。
 	// dir>0。正向。否则反向。dir为迭代间隔
@@ -400,13 +400,13 @@
 
 	// Invoke a method (with arguments) on every item in a collection.
 	// 在list的每个元素上执行methodName方法。 任何传递给invoke的额外参数，invoke都会在调用methodName方法的时候传递给它。
-//{d:2,a:{b:{c:1}}} 路径：[a,b,c]
+	//{d:2,a:{b:{c:1}}} 路径：[a,b,c]
 	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], 'sort'));
 	// console.log(_.invoke([{d:2,a:{b:function(a){return a }}}, {d:2,a:{b:function(a){return a+a}}}], ['a','b'],1));
 	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], alert)); error
 
 	_.invoke = restArgs(function(obj, path, args) {
-debugger;
+
 		var contextPath, func;
 		if (_.isFunction(path)) {
 			func = path;
@@ -455,10 +455,12 @@ debugger;
 	// 返回list中的最大值。如果传递iteratee参数，iteratee将作为list中每个值的排序依据。
 	// 如果list为空，将返回-Infinity，所以你可能需要事先用isEmpty检查 list 。
 	_.max = function(obj, iteratee, context) {
+		//默认给负无穷。然后一个一个对比 。
 		var result = -Infinity,
 			lastComputed = -Infinity,
 			value, computed;
 		//???第一个if的后半部分
+		//console.log(_.max([1,2,3,4]));
 		if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object') && obj != null) {
 			obj = isArrayLike(obj) ? obj : _.values(obj);
 			for (var i = 0, length = obj.length; i < length; i++) {
@@ -477,11 +479,13 @@ debugger;
 				}
 			});
 		}
+		//返回的是排序的那个值。而不是计算的值。
 		return result;
 	};
 
 	// Return the minimum element (or element-based computation).
 	// 返回最小值。
+	// 过程与上面一个function相当。
 	_.min = function(obj, iteratee, context) {
 		var result = Infinity,
 			lastComputed = Infinity,
@@ -519,6 +523,7 @@ debugger;
 	// The internal `guard` argument allows it to work with `map`.
 	// 返回数组中的一个或n个值。乱序
 	_.sample = function(obj, n, guard) {
+		//随机返回一个。
 		if (n == null || guard) {
 			if (!isArrayLike(obj)) obj = _.values(obj);
 			return obj[_.random(obj.length - 1)];
@@ -774,7 +779,7 @@ debugger;
 	// the passed-in arrays.
 	// 返回传入的 arrays（数组）并集：
 	// 按顺序返回，返回数组的元素是唯一的，可以传入一个或多个 arrays（数组）。
-	_.union = restArgs(function(arrays) {		
+	_.union = restArgs(function(arrays) {
 		return _.uniq(flatten(arrays, true, true));
 	});
 
@@ -992,12 +997,11 @@ debugger;
 	// available.
 	_.bind = restArgs(function(func, context, args) {
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-		var bound = restArgs(function(callArgs) {			
+		var bound = restArgs(function(callArgs) {
 			return executeBound(func, bound, context, this, args.concat(callArgs));
-		});		
+		});
 		return bound;
 	});
-
 
 
 
@@ -1422,7 +1426,9 @@ debugger;
 	// Create a (shallow-cloned) duplicate of an object.
 	// 返回一个对象的浅复制
 	_.clone = function(obj) {
+		//不是对象，返回原值
 		if (!_.isObject(obj)) return obj;
+		//数组用slice。对象用extend。
 		return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
 	};
 
@@ -1786,7 +1792,7 @@ debugger;
 
 		var testRegexp = RegExp(source);
 		var replaceRegexp = RegExp(source, 'g');
-				console.log(replaceRegexp,typeof testRegexp);
+		console.log(replaceRegexp, typeof testRegexp);
 		return function(string) {
 			string = string == null ? '' : '' + string;
 			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
