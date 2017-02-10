@@ -698,7 +698,7 @@
 	};
 
 	// Trim out all falsy values from an array.
-	// 返回所有真值。
+	// 返回所有真值。Boolen是一个判断是否为真值的原生函数。
 	_.compact = function(array) {
 		return _.filter(array, Boolean);
 	};
@@ -760,14 +760,19 @@
 		for (var i = 0, length = getLength(array); i < length; i++) {
 			var value = array[i],
 				computed = iteratee ? iteratee(value, i, array) : value;
+			//排序好的
 			if (isSorted) {
+				//!i即i为0的时候 直接push
+				//这里的seen不是当数组用，而是当一个标识。seen是上一个计算值。当computed不等于上一个计算值。才push。
 				if (!i || seen !== computed) result.push(value);
 				seen = computed;
+				//如果有计算函数的。
 			} else if (iteratee) {
 				if (!_.contains(seen, computed)) {
 					seen.push(computed);
 					result.push(value);
 				}
+				//原始的去重复。
 			} else if (!_.contains(result, value)) {
 				result.push(value);
 			}
@@ -806,7 +811,8 @@
 	// Only the elements present in just the first array will remain.
 	// 比较两个数组中的值。只在第一个数组不在第二个的能留下。差集？
 	_.difference = restArgs(function(array, rest) {
-		//???这里为什么要降维？
+		//???这里为什么要降维？  比如 _.difference([1,2,3],[3,4],[1,4]);  通过rest函数变成 了（[1,2,3],[[3,4],[1,4]]))
+		//所以要降维。把rest变成 [3,4,1,4]这样子。
 		rest = flatten(rest, true, true);
 		return _.filter(array, function(value) {
 			return !_.contains(rest, value);
