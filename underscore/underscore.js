@@ -911,11 +911,11 @@
 					length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
 				}
 			} else if (sortedIndex && idx && length) {
-				//这里这个判断是干嘛的???
+				//这里这个判断是干嘛的???  判断如果item在array中能排到哪个位置。再用item与那个位置的值做比较。如果相等，说明在里面。
 				idx = sortedIndex(array, item);
 				return array[idx] === item ? idx : -1;
 			}
-			//null
+			//nan
 			if (item !== item) {
 				idx = predicateFind(slice.call(array, i, length), _.isNaN);
 				return idx >= 0 ? idx + i : -1;
