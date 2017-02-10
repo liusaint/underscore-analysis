@@ -899,6 +899,9 @@
 	// 如果fromIndex是负数，作为偏移量。
 	// 正向。如果算出来的小于0,则搜索整个数组。
 	// 反向。如果算出来的小于0,返回-1;
+	// idx可能是数字，也可能是布尔值。
+	// 是数字的时候表示fromIndex.布尔值的时候表示是isSorted
+	
 	var createIndexFinder = function(dir, predicateFind, sortedIndex) {
 
 		return function(array, item, idx) {
@@ -910,12 +913,14 @@
 				} else {
 					length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
 				}
+
 			} else if (sortedIndex && idx && length) {
 				//这里这个判断是干嘛的???  判断如果item在array中能排到哪个位置。再用item与那个位置的值做比较。如果相等，说明在里面。
+				//不过有这个就没有fromIndex了
 				idx = sortedIndex(array, item);
 				return array[idx] === item ? idx : -1;
 			}
-			//nan
+			//NAN
 			if (item !== item) {
 				idx = predicateFind(slice.call(array, i, length), _.isNaN);
 				return idx >= 0 ? idx + i : -1;
