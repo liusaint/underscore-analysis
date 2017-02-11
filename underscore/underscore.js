@@ -1006,6 +1006,7 @@
 	// Create a function bound to a given object (assigning `this`, and arguments,
 	// optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
 	// available.
+	// 创造一个绑定在给的对象上运行的函数。
 	_.bind = restArgs(function(func, context, args) {
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
 		var bound = restArgs(function(callArgs) {
