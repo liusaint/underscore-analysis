@@ -14,6 +14,19 @@ $.a = function(){
 }
 
 
+window.b = 1;
+var objA = {
+	b:'here is in objA'
+}
+function a(x){
+	console.log(this.b,x);
+}
 
+var aBound = _.bind(a,objA);
+// aBound('123');
+
+new aBound('123');
 
 }());
+
+

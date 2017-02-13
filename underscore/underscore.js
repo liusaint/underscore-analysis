@@ -996,6 +996,8 @@
 
 	var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
 		// 如果callingContext不是boundFunc的实例。运行sourceFunc.
+		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用
+		debugger;
 		if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
 		var self = baseCreate(sourceFunc.prototype);
 		var result = sourceFunc.apply(self, args);
@@ -1007,7 +1009,9 @@
 	// optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
 	// available.
 	// 创造一个绑定在给的对象上运行的函数。
+	// new的情况似乎没有预想的效果？
 	_.bind = restArgs(function(func, context, args) {
+		debugger;
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
 		var bound = restArgs(function(callArgs) {
 			return executeBound(func, bound, context, this, args.concat(callArgs));
