@@ -1138,6 +1138,7 @@
 	// `{leading: false}`. To disable execution on the trailing edge, ditto.
 	_.throttle = function(func, wait, options) {
 		var timeout, context, args, result;
+		// 上次运行的时间戳
 		var previous = 0;
 		if (!options) options = {};
 

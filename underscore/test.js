@@ -72,8 +72,14 @@
 	// add(5)
 	// goodAdd(5);
 
+console.log(2);
+function log(){
+	console.log(1);
+}
+// log();
 
-
+var goodLog = _.throttle(log,1000);
+setInterval(goodLog, 1);
 
 
 }());
