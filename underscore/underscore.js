@@ -901,7 +901,7 @@
 	// 反向。如果算出来的小于0,返回-1;
 	// idx可能是数字，也可能是布尔值。
 	// 是数字的时候表示fromIndex.布尔值的时候表示是isSorted
-	
+
 	var createIndexFinder = function(dir, predicateFind, sortedIndex) {
 
 		return function(array, item, idx) {
@@ -997,7 +997,7 @@
 	var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
 		// 如果callingContext不是boundFunc的实例。运行sourceFunc.
 		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用.		
-		debugger;		
+
 		if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
 		var self = baseCreate(sourceFunc.prototype);
 		//有些函数是直接返回obj。
@@ -1012,7 +1012,7 @@
 	// 创造一个绑定在给的对象上运行的函数。
 	// js原生的bind函数。　使用new的时候绑定的对象是无效的。
 	_.bind = restArgs(function(func, context, args) {
-		debugger;
+
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
 		var bound = restArgs(function(callArgs) {
 			return executeBound(func, bound, context, this, args.concat(callArgs));
@@ -1027,12 +1027,25 @@
 	// as a placeholder by default, allowing any combination of arguments to be
 	// pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.
 	// 偏函数与函数柯里化？
+	// 局部应用一个函数填充在任意个数的 arguments，不改变其动态this值。和bind方法很相近。你可以传递_ 给arguments列表来指定一个不预先填充，但在调用时提供的参数。
+	// 返回一个函数。预先填充一些参数。对于不用填充的参数位置，使用_占位。
+	// 实际运行的时候，会把两次传递的参数拼成一个参数，然后再运行。
+	// var add = function(a, b,c,d,e) { return a+b+c+d+e; };
+	//  add20 = _.partial(add, _, 2,_,4,_);
+	// add20(1,3,5);
+	// 注意第一次传入的参数是包含占位符的。
+	// 第二次传入的是不包含占位符的。
+	// 所以第二次的每一个参数都要起到作用。替换掉第一个参数中的占位符号。
 	_.partial = restArgs(function(func, boundArgs) {
+
 		var placeholder = _.partial.placeholder;
 		var bound = function() {
+
 			var position = 0,
 				length = boundArgs.length;
+			//第一次传入的参数的长度。
 			var args = Array(length);
+
 			for (var i = 0; i < length; i++) {
 				args[i] = boundArgs[i] === placeholder ? arguments[position++] : boundArgs[i];
 			}
@@ -1047,7 +1060,28 @@
 	// Bind a number of an object's methods to that object. Remaining arguments
 	// are the method names to be bound. Useful for ensuring that all callbacks
 	// defined on an object belong to it.
-	// 将方法绑定到obj上
+	// 将多个方法绑定到obj上。注意传入的参数是obj中的函数名。
+	// 	window.a = 'a in global';
+	// var obj = {
+	// 	a: 'a in obj',
+	// 	b: 'b in obj',
+	// 	c: 'c in obj',
+	// 	fa: function() {
+	// 		console.log(this.a);
+	// 	},
+	// 	fb: function() {
+	// 		console.log(this.b);
+	// 	},
+	// 	fc: function() {
+	// 		console.log(this.c);
+	// 	}
+	// }
+
+	// var a = obj.fa;
+	// a();//'a in global'。this指向全局对象
+	// _.bindAll(obj, 'fa', 'fb', 'fc');
+	// a =  obj.fa;
+	// a();//a in obj。this指向绑定对象
 	_.bindAll = restArgs(function(obj, keys) {
 		keys = flatten(keys, false, false);
 		var index = keys.length;
@@ -1060,6 +1094,10 @@
 
 	// Memoize an expensive function by storing its results.
 	// 缓存结果
+	// 缓存某些代价昂贵的函数的结果。
+	// var fibonacci = _.memoize(function(n) {
+	//   return n < 2 ? n: fibonacci(n - 1) + fibonacci(n - 2);
+	// });
 	_.memoize = function(func, hasher) {
 		var memoize = function(key) {
 			var cache = memoize.cache;
@@ -1956,7 +1994,7 @@
 
 	// Add a "chain" function. Start chaining a wrapped Underscore object.
 	_.chain = function(obj) {
-		debugger;
+
 		var instance = _(obj);
 		instance._chain = true;
 		return instance;

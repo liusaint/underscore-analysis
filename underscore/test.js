@@ -1,36 +1,61 @@
-(function(){
+(function() {
 
-console.log('$');
+	// console.log('$');
 
-var $ = function(obj){
-	if (obj instanceof $)return obj;
-	if(!this instanceof $) return new $(obj);
-	$._wrapped = obj;
-}
+	// var $ = function(obj){
+	// 	if (obj instanceof $)return obj;
+	// 	if(!this instanceof $) return new $(obj);
+	// 	$._wrapped = obj;
+	// }
 
-window.$ = $;
-$.a = function(){
-	console.log(1);
-}
+	// window.$ = $;
+	// $.a = function(){
+	// 	console.log(1);
+	// }
 
 
-window.b = 1;
-var objA = {
-	b:'here is in objA'
-}
-function a(x){
-	console.log(this.b,x);
-	this.a = 1;
-	return {
-		a:222
+	// window.b = 1;
+	// var objA = {
+	// 	b:'here is in objA'
+	// }
+	// function a(x){
+	// 	console.log(this.b,x);
+	// 	this.a = 1;
+	// 	return {
+	// 		a:222
+	// 	}
+	// }
+
+	// var aBound = _.bind(a,objA);
+	// aBound('123');
+
+	// console.log(new aBound('123'));
+	// 
+	// 
+
+	// var add = function(a, b,c,d,e) { return a+b+c+d+e; };
+	//  add20 = _.partial(add, _, 2,_,4,_);
+	// add20(1,3,5);
+	window.a = 'a in global';
+	var obj = {
+		a: 'a in obj',
+		b: 'b in obj',
+		c: 'c in obj',
+		fa: function() {
+			console.log(this.a);
+		},
+		fb: function() {
+			console.log(this.b);
+		},
+		fc: function() {
+			console.log(this.c);
+		}
 	}
-}
 
-var aBound = _.bind(a,objA);
-// aBound('123');
-
-console.log(new aBound('123'));
+	var a = obj.fa;
+	a();//'a in global'。this指向全局对象
+	_.bindAll(obj, 'fa', 'fb', 'fc');
+	a =  obj.fa;
+	a();//a in obj。this指向绑定对象
 
 }());
-
-
