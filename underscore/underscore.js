@@ -1095,9 +1095,17 @@
 	// Memoize an expensive function by storing its results.
 	// 缓存结果
 	// 缓存某些代价昂贵的函数的结果。
-	// var fibonacci = _.memoize(function(n) {
-	//   return n < 2 ? n: fibonacci(n - 1) + fibonacci(n - 2);
+	// hasher是自定义的计算缓存key的函数。
+	// 	function add(n) {
+	// 	console.log(n-1,n-2);
+	// 	return n < 2 ? n : add(n - 1) + add(n - 2);
+	// };
+	// var goodAdd = _.memoize(function(n) {
+	// 	console.log(n-1,n-2);
+	// 	return n < 2 ? n : goodAdd(n - 1) + goodAdd(n - 2);
 	// });
+	// add(5)
+	// goodAdd(5);
 	_.memoize = function(func, hasher) {
 		var memoize = function(key) {
 			var cache = memoize.cache;

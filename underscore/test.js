@@ -36,26 +36,44 @@
 	// var add = function(a, b,c,d,e) { return a+b+c+d+e; };
 	//  add20 = _.partial(add, _, 2,_,4,_);
 	// add20(1,3,5);
-	window.a = 'a in global';
-	var obj = {
-		a: 'a in obj',
-		b: 'b in obj',
-		c: 'c in obj',
-		fa: function() {
-			console.log(this.a);
-		},
-		fb: function() {
-			console.log(this.b);
-		},
-		fc: function() {
-			console.log(this.c);
-		}
-	}
+	// window.a = 'a in global';
+	// var obj = {
+	// 	a: 'a in obj',
+	// 	b: 'b in obj',
+	// 	c: 'c in obj',
+	// 	fa: function() {
+	// 		console.log(this.a);
+	// 	},
+	// 	fb: function() {
+	// 		console.log(this.b);
+	// 	},
+	// 	fc: function() {
+	// 		console.log(this.c);
+	// 	}
+	// }
 
-	var a = obj.fa;
-	a();//'a in global'。this指向全局对象
-	_.bindAll(obj, 'fa', 'fb', 'fc');
-	a =  obj.fa;
-	a();//a in obj。this指向绑定对象
+	// var a = obj.fa;
+	// a();//'a in global'。this指向全局对象
+	// _.bindAll(obj, 'fa', 'fb', 'fc');
+	// a =  obj.fa;
+	// a();//a in obj。this指向绑定对象
+	// 
+	// 
+	　
+
+	// function add(n) {
+	// 	console.log(n-1,n-2);
+	// 	return n < 2 ? n : add(n - 1) + add(n - 2);
+	// };
+	// var goodAdd = _.memoize(function(n) {
+	// 	console.log(n-1,n-2);
+	// 	return n < 2 ? n : goodAdd(n - 1) + goodAdd(n - 2);
+	// });
+	// add(5)
+	// goodAdd(5);
+
+
+
+
 
 }());
