@@ -20,12 +20,16 @@ var objA = {
 }
 function a(x){
 	console.log(this.b,x);
+	this.a = 1;
+	return {
+		a:222
+	}
 }
 
 var aBound = _.bind(a,objA);
 // aBound('123');
 
-new aBound('123');
+console.log(new aBound('123'));
 
 }());
 

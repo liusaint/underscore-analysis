@@ -996,10 +996,11 @@
 
 	var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
 		// 如果callingContext不是boundFunc的实例。运行sourceFunc.
-		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用
-		debugger;
+		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用.		
+		debugger;		
 		if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
 		var self = baseCreate(sourceFunc.prototype);
+		//有些函数是直接返回obj。
 		var result = sourceFunc.apply(self, args);
 		if (_.isObject(result)) return result;
 		return self;
@@ -1009,7 +1010,7 @@
 	// optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
 	// available.
 	// 创造一个绑定在给的对象上运行的函数。
-	// new的情况似乎没有预想的效果？
+	// js原生的bind函数。　使用new的时候绑定的对象是无效的。
 	_.bind = restArgs(function(func, context, args) {
 		debugger;
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
@@ -1025,6 +1026,7 @@
 	// arguments pre-filled, without changing its dynamic `this` context. _ acts
 	// as a placeholder by default, allowing any combination of arguments to be
 	// pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.
+	// 偏函数与函数柯里化？
 	_.partial = restArgs(function(func, boundArgs) {
 		var placeholder = _.partial.placeholder;
 		var bound = function() {
@@ -1808,7 +1810,7 @@
 
 		var testRegexp = RegExp(source);
 		var replaceRegexp = RegExp(source, 'g');
-		console.log(replaceRegexp, typeof testRegexp);
+		// console.log(replaceRegexp, typeof testRegexp);
 		return function(string) {
 			string = string == null ? '' : '' + string;
 			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
