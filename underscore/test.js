@@ -75,6 +75,7 @@
 // var i = 0;
 function log(){
 	console.log(+new Date());
+	return 1;
 }
 // log();
 
@@ -92,8 +93,9 @@ function log(){
 
 
 var before = _.before(3,log);
-before();
-before();
-before();
+console.log(before());
+console.log(before());
+console.log(before());
+console.log(before());
 
 }());

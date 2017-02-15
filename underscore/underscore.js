@@ -1260,6 +1260,7 @@
 	};
 
 	// Returns a function that will only be executed on and after the Nth call.
+	// 运行了多少次之后才会有效果。
 	_.after = function(times, func) {
 		return function() {
 			if (--times < 1) {
@@ -1269,7 +1270,7 @@
 	};
 
 	// Returns a function that will only be executed up to (but not including) the Nth call.
-	// 返回一个函数只会执行小于times次。
+	// 返回一个函数只会执行小于times次。超过就返回最后一次运行的结果
 	_.before = function(times, func) {
 		var memo;
 		return function() {
