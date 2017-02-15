@@ -1136,6 +1136,10 @@
 	// as much as it can, without ever going more than once per `wait` duration;
 	// but if you'd like to disable the execution on the leading edge, pass
 	// `{leading: false}`. To disable execution on the trailing edge, ditto.
+	// 默认立即执行，{leading: false}过一个wait时间后执行。
+	// 如果禁用最后一次执行，是不会使用timer的。触发方式是每次调用函数。判断与上次执行的时间差。也就是对函数的调用一停止,就不会有下一次执行了。
+	// 不禁用的话。每次执行函数。就会生成一个timer。并清除上一个timer。
+	// 计算下次执行还有多少时间。所以在两次间隔之间调用函数，然后停止调用函数，等到时间间隔到了，还会执行一次。
 	_.throttle = function(func, wait, options) {
 		var timeout, context, args, result;
 		// 上次运行的时间戳
@@ -1146,16 +1150,20 @@
 			previous = options.leading === false ? 0 : _.now();
 			timeout = null;
 			result = func.apply(context, args);
-			if (!timeout) context = args = null;
+			if (!timeout) context = args = null;			
 		};
 
 		var throttled = function() {
 			var now = _.now();
+			//第一次运行的时候会判断。
 			if (!previous && options.leading === false) previous = now;
 			var remaining = wait - (now - previous);
 			context = this;
 			args = arguments;
+			//remaining>wait表示系统时间调整过，时间异常的情况
+			//另外这个里面的执行并不是执行timer。而是把timer里的内容直接在里面执行一遍。主要是考虑到不设置timer的情况下。
 			if (remaining <= 0 || remaining > wait) {
+				console.log(timeout,'timeout')
 				if (timeout) {
 					clearTimeout(timeout);
 					timeout = null;
@@ -1163,7 +1171,9 @@
 				previous = now;
 				result = func.apply(context, args);
 				if (!timeout) context = args = null;
+
 			} else if (!timeout && options.trailing !== false) {
+				console.log(11);
 				timeout = setTimeout(later, remaining);
 			}
 			return result;

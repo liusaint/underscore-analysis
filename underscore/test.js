@@ -72,14 +72,19 @@
 	// add(5)
 	// goodAdd(5);
 
-console.log(2);
+var i = 0;
 function log(){
-	console.log(1);
+	console.log(+new Date());
 }
 // log();
 
-var goodLog = _.throttle(log,1000);
-setInterval(goodLog, 1);
+// var goodLog = _.throttle(log,1000,{leading:false});
+// var goodLog = _.throttle(log,1000);
+var goodLog = _.throttle(log,1000,{trailing:false});
+
+console.log(+new Date());
+window.timer = setInterval(goodLog, 1);
+
 
 
 }());
