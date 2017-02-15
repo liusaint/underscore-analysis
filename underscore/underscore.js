@@ -1232,6 +1232,7 @@
 	// Returns the first function passed as an argument to the second,
 	// allowing you to adjust arguments, run code before and after, and
 	// conditionally execute the original function.
+	// 第一个函数作为参数传递给第二个。
 	_.wrap = function(func, wrapper) {
 		return _.partial(wrapper, func);
 	};
