@@ -1247,7 +1247,7 @@
 
 	// Returns a function that is the composition of a list of functions, each
 	// consuming the return value of the function that follows.
-	// 从后往前，后一个结果作前一个的参数。
+	// 从后往前，后一个结果作前一个的参数。f(g(h(x)));
 	_.compose = function() {
 		var args = arguments;
 		var start = args.length - 1;
@@ -1269,6 +1269,7 @@
 	};
 
 	// Returns a function that will only be executed up to (but not including) the Nth call.
+	// 返回一个函数只会执行小于times次。
 	_.before = function(times, func) {
 		var memo;
 		return function() {

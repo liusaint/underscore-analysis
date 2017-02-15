@@ -87,8 +87,13 @@ function log(){
 
 // console.log(1)
 
-var goodLog1 = _.debounce(log,1000)
-window.timer = setInterval(goodLog1, 1);
+// var goodLog1 = _.debounce(log,1000)
+// window.timer = setInterval(goodLog1, 1);
 
+
+var before = _.before(3,log);
+before();
+before();
+before();
 
 }());
