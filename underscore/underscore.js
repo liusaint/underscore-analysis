@@ -1140,6 +1140,7 @@
 	// 如果禁用最后一次执行，是不会使用timer的。触发方式是每次调用函数。判断与上次执行的时间差。也就是对函数的调用一停止,就不会有下一次执行了。
 	// 不禁用的话。每次执行函数。就会生成一个timer。并清除上一个timer。
 	// 计算下次执行还有多少时间。所以在两次间隔之间调用函数，然后停止调用函数，等到时间间隔到了，还会执行一次。
+	// 节流
 	_.throttle = function(func, wait, options) {
 		var timeout, context, args, result;
 		// 上次运行的时间戳
@@ -1192,7 +1193,7 @@
 	// be triggered. The function will be called after it stops being called for
 	// N milliseconds. If `immediate` is passed, trigger the function on the
 	// leading edge, instead of the trailing.
-	// 防抖动
+	// 防反跳
 	_.debounce = function(func, wait, immediate) {
 		var timeout, result;
 
