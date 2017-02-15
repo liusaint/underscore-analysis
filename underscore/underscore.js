@@ -1193,7 +1193,9 @@
 	// be triggered. The function will be called after it stops being called for
 	// N milliseconds. If `immediate` is passed, trigger the function on the
 	// leading edge, instead of the trailing.
-	// 防反跳
+	// 防反跳。对于连续多次触发的处理。
+	// 默认只有在触发间隔大于wait时才执行。两次触发时间相差大于wait，在前一次触发之后的wait时间执行。
+	// 最后一个参数传递true。则是在第一次触发就执行。然后等待下一次触发间隔大于wait之后再触发时执行。
 	_.debounce = function(func, wait, immediate) {
 		var timeout, result;
 
@@ -1205,10 +1207,14 @@
 		var debounced = restArgs(function(args) {
 			if (timeout) clearTimeout(timeout);
 			if (immediate) {
+				//如果当前有等待中的定时器，则callNow为false。没有则为true。
 				var callNow = !timeout;
+				//这个定时器单纯起定时作用。因为later没有传递参数。所以执行later只是用于将timeout变成null。以为下次执行做好准备。
 				timeout = setTimeout(later, wait);
+				//之前没有等待中的定时器，直接执行
 				if (callNow) result = func.apply(this, args);
 			} else {
+				//使用delay，可以传递参数到定时器中
 				timeout = _.delay(later, wait, this, args);
 			}
 

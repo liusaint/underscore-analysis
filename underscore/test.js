@@ -72,7 +72,7 @@
 	// add(5)
 	// goodAdd(5);
 
-var i = 0;
+// var i = 0;
 function log(){
 	console.log(+new Date());
 }
@@ -80,11 +80,15 @@ function log(){
 
 // var goodLog = _.throttle(log,1000,{leading:false});
 // var goodLog = _.throttle(log,1000);
-var goodLog = _.throttle(log,1000,{trailing:false});
+// var goodLog = _.throttle(log,1000,{trailing:false});
 
-console.log(+new Date());
-window.timer = setInterval(goodLog, 1);
+// console.log(+new Date());
+// window.timer = setInterval(goodLog, 1);
 
+// console.log(1)
+
+var goodLog1 = _.debounce(log,1000)
+window.timer = setInterval(goodLog1, 1);
 
 
 }());
