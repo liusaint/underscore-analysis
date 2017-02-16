@@ -1293,9 +1293,11 @@
 
 
 	// Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.
+	// ie9以下对一些内置的不可枚举属性的覆盖。比如{toString:123},原型中的toString是不可枚举的。这里我们自已定义的toString也循环不到了。要遍历这些属性。需要一个函数单独收集。
 	var hasEnumBug = !{
 		toString: null
 	}.propertyIsEnumerable('toString');
+	//哪些属性可能在这个bug的范围
 	var nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',
 		'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'
 	];
@@ -1407,11 +1409,16 @@
 	};
 
 	// An internal function for creating assigner functions.
-	// 返回一个函数来生成分配函数
+	/**
+	 * [createAssigner description]
+	 * @param  {[type]} keysFunc [用于获取keys的函数：获取全部还是获取自有keys]
+	 * @param  {[type]} defaults [是否覆盖已有的属性　传入true不覆盖　默认是覆盖的]
+	 * @return {[type]}          [返回合并后的对象]
+	 */
 	var createAssigner = function(keysFunc, defaults) {
 		return function(obj) {
 			var length = arguments.length;
-			if (defaults) obj = Object(obj); //???
+			if (defaults) obj = Object(obj); //???为什么要用这一句
 			if (length < 2 || obj == null) return obj;
 			for (var index = 1; index < length; index++) {
 				var source = arguments[index],

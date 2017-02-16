@@ -73,10 +73,10 @@
 	// goodAdd(5);
 
 // var i = 0;
-function log(){
-	console.log(+new Date());
-	return 1;
-}
+// function log(){
+// 	console.log(+new Date());
+// 	return 1;
+// }
 // log();
 
 // var goodLog = _.throttle(log,1000,{leading:false});
@@ -92,10 +92,27 @@ function log(){
 // window.timer = setInterval(goodLog1, 1);
 
 
-var before = _.before(3,log);
-console.log(before());
-console.log(before());
-console.log(before());
-console.log(before());
+// var before = _.before(3,log);
+// console.log(before());
+// console.log(before());
+// console.log(before());
+// console.log(before());
 
 }());
+
+//测试ieBug. for in.
+// function A(){}
+// A.prototype.a = 'a in A';
+// A.prototype.c = function(){}
+// var a = new A();
+// a.toString = 1;
+// // console.log(a.a);
+// a.b = 'b in a '
+// 
+var a = [1,2,3];
+a.toString = 1;
+for(var i in a){
+	// if(!a.hasOwnProperty(i))continue;
+	console.log(i);
+}
+
