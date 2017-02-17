@@ -109,10 +109,15 @@
 // // console.log(a.a);
 // a.b = 'b in a '
 // 
-var a = [1,2,3];
-a.toString = 1;
-for(var i in a){
-	// if(!a.hasOwnProperty(i))continue;
-	console.log(i);
-}
+// var a = [1,2,3];
+// a.toString = 1;
+// for(var i in a){
+// 	// if(!a.hasOwnProperty(i))continue;
+// 	console.log(i);
+// }
 
+// console.log(_.isMatch())
+// 
+var a = {};
+var b = a.constructor;
+console.log(b instanceof b)

@@ -1462,6 +1462,13 @@
 	// Return a copy of the object only containing the whitelisted properties.
 	// 返回一个object副本，只过滤出keys(有效的键组成的数组)参数指定的属性值。
 	// 或者接受一个判断函数，指定挑选哪个key。
+	/**
+	 * [description]
+	 * @param  {[type]} obj      [传入要处理的对象]
+	 * @param  {Object} keys)    [可以是多个属性名。也可以是方法名和context]
+
+	 * @return {[type]}          [description]
+	 */
 	_.pick = restArgs(function(obj, keys) {
 		var result = {},
 			iteratee = keys[0];
@@ -1471,8 +1478,11 @@
 			if (keys.length > 1) iteratee = optimizeCb(iteratee, keys[1]);
 			keys = _.allKeys(obj);
 		} else {
+			//如果直接传的key。那么迭代器就是检测是否在obj中的函数
 			iteratee = keyInObj;
+			//考虑传入参数(obj,['a','b'],['c,d'])的情况。会处理成[a,b,c,d];
 			keys = flatten(keys, false, false);
+			//???
 			obj = Object(obj);
 		}
 		for (var i = 0, length = keys.length; i < length; i++) {
@@ -1489,6 +1499,7 @@
 		var iteratee = keys[0],
 			context;
 		if (_.isFunction(iteratee)) {
+			//返回不满足迭代器的函数
 			iteratee = _.negate(iteratee);
 			if (keys.length > 1) context = keys[1];
 		} else {
@@ -1527,6 +1538,7 @@
 	// Invokes interceptor with the obj, and then returns obj.
 	// The primary purpose of this method is to "tap into" a method chain, in
 	// order to perform operations on intermediate results within the chain.
+	// 用 object作为参数来调用函数interceptor，然后返回object。这种方法的主要意图是作为函数链式调用 的一环, 为了对此对象执行操作并返回对象本身。
 	_.tap = function(obj, interceptor) {
 		interceptor(obj);
 		return obj;
@@ -1537,15 +1549,17 @@
 	_.isMatch = function(object, attrs) {
 		var keys = _.keys(attrs),
 			length = keys.length;
+		//obj为空，arrts为空数组时返回true.
 		if (object == null) return !length;
+		//???
 		var obj = Object(object);
 		for (var i = 0; i < length; i++) {
 			var key = keys[i];
+			//值不一样或不存在key返回false.
 			if (attrs[key] !== obj[key] || !(key in obj)) return false;
 		}
 		return true;
 	};
-
 
 	// Internal recursive comparison function for `isEqual`.
 	// 内部的递归比较方法。
@@ -1553,16 +1567,23 @@
 	eq = function(a, b, aStack, bStack) {
 		// Identical objects are equal. `0 === -0`, but they aren't identical.
 		// See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
+		//　+0 === -0是true。　但是这里需要把它们视为不相等。1/+0等于Infinity。1/-0等于-Infinity。
 		if (a === b) return a !== 0 || 1 / a === 1 / b;
 		// `null` or `undefined` only equal to itself (strict comparison).
 		if (a == null || b == null) return false;
 		// `NaN`s are equivalent, but non-reflexive.
+		// 这里把NaN等于NaN看成相等的。
 		if (a !== a) return b !== b;
 		// Exhaust primitive checks
 		var type = typeof a;
+		//对于a,b不相等的。如果双方是对象或函数。再深入比较
 		if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
 		return deepEq(a, b, aStack, bStack);
 	};
+	// console.log(eq(0,-0)) //false
+	// console.log(eq(NaN,NaN)) //true
+	// console.log(eq(null,1)) //false
+
 
 	// Internal recursive comparison function for `isEqual`.
 	deepEq = function(a, b, aStack, bStack) {
@@ -1579,10 +1600,12 @@
 			case '[object String]':
 				// Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
 				// equivalent to `new String("5")`.
+				// 原始值和包装对象下的原始值判断相等。
 				return '' + a === '' + b;
 			case '[object Number]':
 				// `NaN`s are equivalent, but non-reflexive.
 				// Object(NaN) is equivalent to NaN.
+				// 对NaN的处理
 				if (+a !== +a) return +b !== +b;
 				// An `egal` comparison is performed for other numeric values.
 				return +a === 0 ? 1 / +a === 1 / b : +a === +b;
@@ -1591,19 +1614,25 @@
 				// Coerce dates and booleans to numeric primitive values. Dates are compared by their
 				// millisecond representations. Note that invalid dates with millisecond representations
 				// of `NaN` are not equivalent.
+				// Date和Boolean转化成数字来比较。Date转化成其ms值。　无效Date转化成NaN。
 				return +a === +b;
 			case '[object Symbol]':
+				//对Symbol的处理
 				return SymbolProto.valueOf.call(a) === SymbolProto.valueOf.call(b);
 		}
 
 		var areArrays = className === '[object Array]';
+		//不是数组
 		if (!areArrays) {
 			if (typeof a != 'object' || typeof b != 'object') return false;
 
 			// Objects with different constructors are not equivalent, but `Object`s or `Array`s
 			// from different frames are.
+			// constructor不相等的对象是不相等的。
+			// 但是如果它们是不同的frames中的，则是相等的。
 			var aCtor = a.constructor,
 				bCtor = b.constructor;
+				//???
 			if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
 					_.isFunction(bCtor) && bCtor instanceof bCtor) && ('constructor' in a && 'constructor' in b)) {
 				return false;
