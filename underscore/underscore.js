@@ -1720,7 +1720,7 @@
 	};
 
 	// Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError, isMap, isWeakMap, isSet, isWeakSet.
-	// 添加一批isType的函数。
+	// 添加一批isType的函数。通过判断[[class]]
 	_.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function(name) {
 		_['is' + name] = function(obj) {
 			return toString.call(obj) === '[object ' + name + ']';
@@ -1729,6 +1729,7 @@
 
 	// Define a fallback version of the method in browsers (ahem, IE < 9), where
 	// there isn't any inspectable "Arguments" type.
+	// 对上面的_.isArguments进行补充。主要是ie9下。arguements的返回有问题???
 	if (!_.isArguments(arguments)) {
 		_.isArguments = function(obj) {
 			return _.has(obj, 'callee');
@@ -1737,6 +1738,7 @@
 
 	// Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
 	// IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
+	// ???
 	var nodelist = root.document && root.document.childNodes;
 	if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
 		_.isFunction = function(obj) {
@@ -1745,10 +1747,13 @@
 	}
 
 	// Is a given object a finite number?
+	// isFinite是js原生的。
 	_.isFinite = function(obj) {
+		//???为什么专门把isSymbol放在这里
 		return !_.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
 	};
 
+	
 	// Is the given value `NaN`?
 	// 判断是否NaN
 	_.isNaN = function(obj) {
@@ -1769,6 +1774,7 @@
 
 	// Is a given variable undefined
 	// 判断undefined
+	// 注意undefined在什么情况下可以被赋值???
 	_.isUndefined = function(obj) {
 		return obj === void 0;
 	};
