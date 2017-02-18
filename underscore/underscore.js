@@ -1909,6 +1909,7 @@
 	// Functions for escaping and unescaping strings to/from HTML interpolation.
 	// html转义或反转义的函数。
 	var createEscaper = function(map) {
+
 		var escaper = function(match) {
 			return map[match];
 		};
@@ -1922,12 +1923,15 @@
 		// console.log(replaceRegexp, typeof testRegexp);
 		return function(string) {
 			string = string == null ? '' : '' + string;
+			//匹配则替换
 			return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
 		};
 	};
 	_.escape = createEscaper(escapeMap);
 	_.unescape = createEscaper(unescapeMap);
 
+
+// _.escape('Curly, Larry & Moe');
 
 	// testFun(function(){
 	// 		return _.escape('Curly, Larry & Moe');
