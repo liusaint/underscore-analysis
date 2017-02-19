@@ -1946,6 +1946,7 @@
 	_.result = function(obj, path, fallback) {
 		if (!_.isArray(path)) path = [path];
 		var length = path.length;
+		//如果第二个参数为空，则返回第三个参数或其运行后的结果。
 		if (!length) {
 			return _.isFunction(fallback) ? fallback.call(obj) : fallback;
 		}
@@ -1953,12 +1954,15 @@
 			var prop = obj == null ? void 0 : obj[path[i]];
 			if (prop === void 0) {
 				prop = fallback;
+				//停止迭代
 				i = length; // Ensure we don't continue iterating.
 			}
 			obj = _.isFunction(prop) ? prop.call(obj) : prop;
 		}
 		return obj;
 	};
+console.log(_.result({a:1}))//undefined
+
 
 	// Generate a unique integer id (unique within the entire client session).
 	// Useful for temporary DOM ids.
@@ -1994,7 +1998,7 @@
 		'\r': 'r',
 		'\n': 'n',
 		'\u2028': 'u2028',
-		'\u2029': 'u2029'
+		'\u2029': 'u2029'     
 	};
 
 	var escapeRegExp = /\\|'|\r|\n|\u2028|\u2029/g;
@@ -2011,6 +2015,7 @@
 	_.template = function(text, settings, oldSettings) {
 		//参数提前
 		if (!settings && oldSettings) settings = oldSettings;
+		//合并
 		settings = _.defaults({}, settings, _.templateSettings);
 
 		// Combine delimiters into one regular expression via alternation.
@@ -2023,7 +2028,7 @@
 
 		// Compile the template source, escaping string literals appropriately.
 		var index = 0;
-		var source = "__p+='";
+		var source = "__p+='"; 
 		text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
 			source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
 			index = offset + match.length;
@@ -2066,6 +2071,12 @@
 
 		return template;
 	};
+
+debugger;
+var compiled = _.template("hello: <%= name %>");
+var res = compiled({name: 'moe'});
+console.log(res);
+
 
 	// Add a "chain" function. Start chaining a wrapped Underscore object.
 	_.chain = function(obj) {
