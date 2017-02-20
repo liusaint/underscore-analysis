@@ -2054,6 +2054,7 @@ console.log(_.result({a:1}))//undefined
 		// 注意with的用法 
 		if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
 
+		//这里的__t用来作为替代值。
 		source = "var __t,__p='',__j=Array.prototype.join," +
 			"print=function(){__p+=__j.call(arguments,'');};\n" +
 			source + 'return __p;\n';
@@ -2099,8 +2100,12 @@ debugger;
 // var res = compiled({name: 'moe'});
 // console.log(res);
 
-var template = _.template("<b><%- value %></b>");
-template({value: '<script>'});
+// var template = _.template("<b><%- value %></b>");
+// template({value: '<script>'});
+
+var compiled = _.template("<% print('Hello ' + epithet); %>");
+compiled({epithet: "stooge"});
+
 
 
 	// Add a "chain" function. Start chaining a wrapped Underscore object.
