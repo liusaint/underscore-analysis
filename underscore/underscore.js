@@ -2032,9 +2032,10 @@ console.log(_.result({a:1}))//undefined
 		//注意replace函数传入的回调函数的参数。
 		//参考https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace
 		text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+			// 没有匹配上的转义一下
 			source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
 			index = offset + match.length;
-
+			//对三种匹配正则的不同处理
 			if (escape) {
 				source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
 			} else if (interpolate) {
@@ -2044,6 +2045,7 @@ console.log(_.result({a:1}))//undefined
 			}
 
 			// Adobe VMs need the match returned to produce the correct offset.
+			// 将原来的match值返回去替换，使offset在正确的位置。
 			return match;
 		});
 		source += "';\n";
@@ -2054,6 +2056,19 @@ console.log(_.result({a:1}))//undefined
 		source = "var __t,__p='',__j=Array.prototype.join," +
 			"print=function(){__p+=__j.call(arguments,'');};\n" +
 			source + 'return __p;\n';
+
+		// var __t, __p = '',
+		// 	__j = Array.prototype.join,
+		// 	print = function() {
+		// 		__p += __j.call(arguments, '');
+		// 	};
+		// with(obj || {}) {
+		// 	__p += 'hello: ' +
+		// 		((__t = (name)) == null ? '' : __t) +
+		// 		'';
+		// }
+		// return __p;
+
 
 		var render;
 		try {
@@ -2075,9 +2090,12 @@ console.log(_.result({a:1}))//undefined
 	};
 
 debugger;
-var compiled = _.template("hello: <%= name %>");
-var res = compiled({name: 'moe'});
-console.log(res);
+// var compiled = _.template("hello: <%= name %>");
+// var res = compiled({name: 'moe'});
+// console.log(res);
+
+var template = _.template("<b><%- value %></b>");
+template({value: '<script>'});
 
 
 	// Add a "chain" function. Start chaining a wrapped Underscore object.
