@@ -2029,6 +2029,8 @@ console.log(_.result({a:1}))//undefined
 		// Compile the template source, escaping string literals appropriately.
 		var index = 0;
 		var source = "__p+='"; 
+		//注意replace函数传入的回调函数的参数。
+		//参考https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace
 		text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
 			source += text.slice(index, offset).replace(escapeRegExp, escapeChar);
 			index = offset + match.length;
