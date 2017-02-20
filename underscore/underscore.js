@@ -2051,6 +2051,7 @@ console.log(_.result({a:1}))//undefined
 		source += "';\n";
 
 		// If a variable is not specified, place data values in local scope.
+		// 注意with的用法 
 		if (!settings.variable) source = 'with(obj||{}){\n' + source + '}\n';
 
 		source = "var __t,__p='',__j=Array.prototype.join," +
@@ -2072,6 +2073,10 @@ console.log(_.result({a:1}))//undefined
 
 		var render;
 		try {
+			//注意: 使用Function构造器生成的函数，并不会在创建它们的上下文中创建闭包；它们一般在全局作用域中被创建。当运行这些函数的时候，它们只能访问自己的本地变量和全局变量，不能访问Function构造器被调用生成的上下文的作用域。这和使用带有函数表达式代码的 eval 不同。
+			//new Function ([arg1[, arg2[, ...argN]],] functionBody)
+
+
 			render = new Function(settings.variable || 'obj', '_', source);
 		} catch (e) {
 			e.source = source;

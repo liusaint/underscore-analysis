@@ -118,6 +118,16 @@
 
 // console.log(_.isMatch())
 // 
-var a = {};
-var b = a.constructor;
-console.log(b instanceof b)
+// var a = {};
+// var b = a.constructor;
+// console.log(b instanceof b)
+
+var obj = {value1:123}
+var __p = '';
+var __t;
+var value;
+with (obj || {}) {
+	console.log(value);
+        __p += '<b>' + ((__t = (value)) == null ? '' : console.log(__t)) + '</b>';
+    }
+    console.log(__p);
