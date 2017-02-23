@@ -2096,15 +2096,21 @@ console.log(_.result({a:1}))//undefined
 	};
 
 debugger;
-// var compiled = _.template("hello: <%= name %>");
-// var res = compiled({name: 'moe'});
+var compiled = _.template("hello: <%= name %>");
+var res = compiled({name: 'moe'});
 // console.log(res);
+
+
+// var compiled = _.template("hello: <%= name %>",{variable:{name:123}});
+// var res = compiled({name: 'moe'});
+
+
 
 // var template = _.template("<b><%- value %></b>");
 // template({value: '<script>'});
 
-var compiled = _.template("<% print('Hello ' + epithet); %>");
-compiled({epithet: "stooge"});
+// var compiled = _.template("<% print('Hello ' + epithet); %>");
+// compiled({epithet: "stooge"});
 
 
 
