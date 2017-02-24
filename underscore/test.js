@@ -122,12 +122,14 @@
 // var b = a.constructor;
 // console.log(b instanceof b)
 
-var obj = {value1:123}
-var __p = '';
-var __t;
-var value;
-with (obj || {}) {
-	console.log(value);
-        __p += '<b>' + ((__t = (value)) == null ? '' : console.log(__t)) + '</b>';
-    }
-    console.log(__p);
+debugger;
+var stooges = [{name: 'curly', age: 25}, {name: 'moe', age: 21}, {name: 'larry', age: 23}];
+var youngest = _.chain(stooges)
+  .sortBy(function(stooge){ return stooge.age; })
+  .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
+  .first()
+  .value();
+
+
+
+

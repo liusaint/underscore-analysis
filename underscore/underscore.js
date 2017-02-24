@@ -57,7 +57,7 @@
 	var _ = function(obj) {
 		if (obj instanceof _) return obj;
 		if (!(this instanceof _)) return new _(obj);
-		//?
+		//用于链式调用
 		this._wrapped = obj;
 	};
 
@@ -2121,6 +2121,8 @@ compiled({epithet: "stooge"});
 	// If Underscore is called as a function, it returns a wrapped object that
 	// can be used OO-style. This wrapper holds altered versions of all the
 	// underscore functions. Wrapped objects may be chained.
+	// _作为一个函数来调用。返回一个含有_wrapped对象的对象。可以链式调用。
+	// 这个对象包含了所有改变后的_中的方法，这些方法是可以链式调用的。
 
 	// Helper function to continue chaining intermediate results.
 	var chainResult = function(instance, obj) {
@@ -2128,6 +2130,7 @@ compiled({epithet: "stooge"});
 	};
 
 	// Add your own custom functions to the Underscore object.
+	// 把obj里的的方法放到_原型上。
 	_.mixin = function(obj) {
 		_.each(_.functions(obj), function(name) {
 			var func = _[name] = obj[name];
@@ -2141,9 +2144,11 @@ compiled({epithet: "stooge"});
 	};
 
 	// Add all of the Underscore functions to the wrapper object.
+	// 把所有的_方法放到_原型上。
 	_.mixin(_);
 
 	// Add all mutator Array functions to the wrapper.
+	// 把数组原生的方法放到原型上。
 	_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
 		var method = ArrayProto[name];
 		_.prototype[name] = function() {
@@ -2155,6 +2160,7 @@ compiled({epithet: "stooge"});
 	});
 
 	// Add all accessor Array functions to the wrapper.
+	// 把数组原生的方法放到原型上。
 	_.each(['concat', 'join', 'slice'], function(name) {
 		var method = ArrayProto[name];
 		_.prototype[name] = function() {
