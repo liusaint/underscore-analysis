@@ -51,13 +51,15 @@
 
 	// Create a safe reference to the Underscore object for use below.
 	// 创建一个安全的underscore对象的引用以便后面使用。
-	// 单例。强制new。
+	// 强制new。
 	// 创建一个_库的实例。
 	// 内部变量。_.chain()会调用它。
 	var _ = function(obj) {
+		//如果obj是_的实例，直接返回它
 		if (obj instanceof _) return obj;
+		//如果不是new _()这种方式调用的，强制new
 		if (!(this instanceof _)) return new _(obj);
-		//用于链式调用
+		//用于链式调用时，obj是链式调用时传入的参数。
 		this._wrapped = obj;
 	};
 
@@ -2131,18 +2133,28 @@ var res = compiled({name: 'moe'});
 	// 这个对象包含了所有改变后的_中的方法，这些方法是可以链式调用的。
 
 	// Helper function to continue chaining intermediate results.
+	// 助手函数 继续链式 调用的中间结果
 	var chainResult = function(instance, obj) {
+		//如果是_.chain生成的实例。会有一个参数_.chain = true;
+		//这种情况下就返回下一步的中间结果。obj是上一步的结果。生成一个新的
+		//_(obj).chain()的效果等同于 _.chain(obj)?
 		return instance._chain ? _(obj).chain() : obj;
 	};
 
 	// Add your own custom functions to the Underscore object.
-	// 把obj里的的方法放到_原型上。
+	// 把obj里的的方法放到_上。同时也放到_原型上。_原型上的是经过处理过的函数。
 	_.mixin = function(obj) {
 		_.each(_.functions(obj), function(name) {
+			//把obj里的的方法放到_上
 			var func = _[name] = obj[name];
+			//函数处理后放到原型上
 			_.prototype[name] = function() {
+				//这里的this指向_的实例
+				//args是氢初始参数放到一个数组里。
 				var args = [this._wrapped];
+				//新的参数也放该数组中
 				push.apply(args, arguments);
+				//返回中间结果
 				return chainResult(this, func.apply(_, args));
 			};
 		});
@@ -2154,35 +2166,44 @@ var res = compiled({name: 'moe'});
 	_.mixin(_);
 
 	// Add all mutator Array functions to the wrapper.
-	// 把数组原生的方法放到原型上。
+	// 把数组原生的方法修改并放到原型上。 这样使这些原生方法也可以链式调用。
+	// 这些方法是直接在数组上进行操作的方法。
 	_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
 		var method = ArrayProto[name];
 		_.prototype[name] = function() {
 			var obj = this._wrapped;
 			method.apply(obj, arguments);
+			//这一行是处理ie下的bug。shift()和splice()在低版本IE时删除不掉类数组对象obj[0]的值。所以这里要特别处理。
+			//详见https://github.com/jashkenas/underscore/issues/397
 			if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
+			//返回链式调用的中间值。
 			return chainResult(this, obj);
 		};
 	});
 
 	// Add all accessor Array functions to the wrapper.
 	// 把数组原生的方法放到原型上。
+	// 这些不是直接在数组上操作，而是返回一个新的结果。
 	_.each(['concat', 'join', 'slice'], function(name) {
 		var method = ArrayProto[name];
 		_.prototype[name] = function() {
+			//会把返回的结果当成新的值传入中间态。_wrapped会等于这个值。
 			return chainResult(this, method.apply(this._wrapped, arguments));
 		};
 	});
 
 	// Extracts the result from a wrapped and chained object.
+	// 调用这个函数会从中间态中拿到结果值并结束链式调用。
 	_.prototype.value = function() {
 		return this._wrapped;
 	};
 
 	// Provide unwrapping proxy for some methods used in engine operations
 	// such as arithmetic and JSON stringification.
+	// 写入_实例的valueOf toJson方法。 返回_wrapped
 	_.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
 
+		// 写入_实例的toString方法。 返回_wrapped的string结果。
 	_.prototype.toString = function() {
 		return String(this._wrapped);
 	};
@@ -2194,6 +2215,7 @@ var res = compiled({name: 'moe'});
 	// popular enough to be bundled in a third party lib, but not be part of
 	// an AMD load request. Those cases could generate an error when an
 	// anonymous define() is called outside of a loader request.
+	// 兼容 AMD 规范
 	if (typeof define == 'function' && define.amd) {
 		define('underscore', [], function() {
 			return _;

@@ -123,13 +123,19 @@
 // console.log(b instanceof b)
 
 debugger;
-var stooges = [{name: 'curly', age: 25}, {name: 'moe', age: 21}, {name: 'larry', age: 23}];
-var youngest = _.chain(stooges)
-  .sortBy(function(stooge){ return stooge.age; })
-  .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
-  .first()
-  .value();
+// var stooges = [{name: 'curly', age: 25}, {name: 'moe', age: 21}, {name: 'larry', age: 23}];
+// var youngest = _.chain(stooges)
+//   .sortBy(function(stooge){ return stooge.age; })
+//   .map(function(stooge){ return stooge.name + ' is ' + stooge.age; })
+//   .first()
+//   .value();
 
 
 
 
+var a = [1,2,3,4];
+a.shift();
+a.shift();
+a.shift();
+a.shift();
+console.log(a);
