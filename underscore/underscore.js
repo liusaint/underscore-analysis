@@ -1153,7 +1153,7 @@
 			previous = options.leading === false ? 0 : _.now();
 			timeout = null;
 			result = func.apply(context, args);
-			if (!timeout) context = args = null;			
+			if (!timeout) context = args = null;
 		};
 
 		var throttled = function() {
@@ -1166,7 +1166,7 @@
 			//remaining>wait表示系统时间调整过，时间异常的情况
 			//另外这个里面的执行并不是执行timer。而是把timer里的内容直接在里面执行一遍。主要是考虑到不设置timer的情况下。
 			if (remaining <= 0 || remaining > wait) {
-				console.log(timeout,'timeout')
+				console.log(timeout, 'timeout')
 				if (timeout) {
 					clearTimeout(timeout);
 					timeout = null;
@@ -1468,7 +1468,7 @@
 	 * [description]
 	 * @param  {[type]} obj      [传入要处理的对象]
 	 * @param  {Object} keys)    [可以是多个属性名。也可以是方法名和context]
-
+	 
 	 * @return {[type]}          [description]
 	 */
 	_.pick = restArgs(function(obj, keys) {
@@ -1634,7 +1634,7 @@
 			// 但是如果它们是不同的frames中的，则是相等的。
 			var aCtor = a.constructor,
 				bCtor = b.constructor;
-				//???
+			//???
 			if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor &&
 					_.isFunction(bCtor) && bCtor instanceof bCtor) && ('constructor' in a && 'constructor' in b)) {
 				return false;
@@ -1755,7 +1755,7 @@
 		return !_.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj));
 	};
 
-	
+
 	// Is the given value `NaN`?
 	// 判断是否NaN
 	_.isNaN = function(obj) {
@@ -1933,7 +1933,7 @@
 	_.unescape = createEscaper(unescapeMap);
 
 
-// _.escape('Curly, Larry & Moe');
+	// _.escape('Curly, Larry & Moe');
 
 	// testFun(function(){
 	// 		return _.escape('Curly, Larry & Moe');
@@ -1963,7 +1963,7 @@
 		}
 		return obj;
 	};
-console.log(_.result({a:1}))//undefined
+
 
 
 	// Generate a unique integer id (unique within the entire client session).
@@ -2000,7 +2000,7 @@ console.log(_.result({a:1}))//undefined
 		'\r': 'r',
 		'\n': 'n',
 		'\u2028': 'u2028',
-		'\u2029': 'u2029'     
+		'\u2029': 'u2029'
 	};
 
 	var escapeRegExp = /\\|'|\r|\n|\u2028|\u2029/g;
@@ -2030,7 +2030,7 @@ console.log(_.result({a:1}))//undefined
 
 		// Compile the template source, escaping string literals appropriately.
 		var index = 0;
-		var source = "__p+='"; 
+		var source = "__p+='";
 		//注意replace函数传入的回调函数的参数。
 		//参考https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/replace
 		text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
@@ -2097,22 +2097,24 @@ console.log(_.result({a:1}))//undefined
 		return template;
 	};
 
-debugger;
-var compiled = _.template("hello: <%= name %>");
-var res = compiled({name: 'moe'});
-// console.log(res);
+
+	var compiled = _.template("hello: <%= name %>");
+	var res = compiled({
+		name: 'moe'
+	});
+	// console.log(res);
 
 
-// var compiled = _.template("hello: <%= name %>",{variable:{name:123}});
-// var res = compiled({name: 'moe'});
+	// var compiled = _.template("hello: <%= name %>",{variable:{name:123}});
+	// var res = compiled({name: 'moe'});
 
 
 
-// var template = _.template("<b><%- value %></b>");
-// template({value: '<script>'});
+	// var template = _.template("<b><%- value %></b>");
+	// template({value: '<script>'});
 
-// var compiled = _.template("<% print('Hello ' + epithet); %>");
-// compiled({epithet: "stooge"});
+	// var compiled = _.template("<% print('Hello ' + epithet); %>");
+	// compiled({epithet: "stooge"});
 
 
 
@@ -2203,7 +2205,7 @@ var res = compiled({name: 'moe'});
 	// 写入_实例的valueOf toJson方法。 返回_wrapped
 	_.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
 
-		// 写入_实例的toString方法。 返回_wrapped的string结果。
+	// 写入_实例的toString方法。 返回_wrapped的string结果。
 	_.prototype.toString = function() {
 		return String(this._wrapped);
 	};
