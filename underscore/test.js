@@ -122,7 +122,7 @@
 // var b = a.constructor;
 // console.log(b instanceof b)
 
-debugger;
+// debugger;
 // var stooges = [{name: 'curly', age: 25}, {name: 'moe', age: 21}, {name: 'larry', age: 23}];
 // var youngest = _.chain(stooges)
 //   .sortBy(function(stooge){ return stooge.age; })
@@ -133,9 +133,42 @@ debugger;
 
 
 
-var a = [1,2,3,4];
-a.shift();
-a.shift();
-a.shift();
-a.shift();
-console.log(a);
+// var a = [1,2,3,4];
+// a.shift();
+// a.shift();
+// a.shift();
+// a.shift();
+// console.log(a);
+// 
+var datas = [
+	{
+		title: '标题1',
+		url: 'http://www.baidu.com',
+		film: '电影名称1'
+	},
+	{
+		title: '标题2',
+		url: 'http://www.baidu.com',
+		film: '电影名称2'
+	},
+	{
+		title: '标题3',
+		url: 'http://www.baidu.com',
+		film: '电影名称3'
+	},
+	{
+		title: '标题4',
+		url: 'http://www.baidu.com',
+		film: '电影名称4'
+	},
+	{
+		title: '标题5',
+		url: 'http://www.baidu.com',
+		film: '电影名称5'
+	}
+];
+
+
+
+var template = _.template('<% _.each(datas, function (item) { %> <div class="outer"> <%= item.title %> - <%= item.url %> - <%= item.film %> </div> <% }); %>')(datas); 
+console.log(template,1);
