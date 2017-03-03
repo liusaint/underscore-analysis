@@ -23,6 +23,7 @@
 	// 保存之前的_变量的值。用于无冲突处理。
 	// 因为我们要占用_这个全局变量。但是原来全局中可能已经有了这个变量。所以我们先把这个变量保存起来。
 	// 当我们调用_.noConflict的时候，可以放弃本库对_的占用，使用其他的变量来代替。并且把_原来的值得还给全局。
+	// 我要用_来代表我。但是会给_原来代表的内容留个位置放起来。
 	var previousUnderscore = root._;
 
 	// Save bytes in the minified (but not gzipped) version:
@@ -63,27 +64,6 @@
 		this._wrapped = obj;
 	};
 
-	//用于我测试。
-	var testFun = function(func) {
-
-			var res = function() {
-				var arg = arguments;
-				setTimeout(function() {
-					var res = func.apply(null, arg);
-					console.log(res);
-				}, 0);
-			}
-
-			return res;
-
-		}
-		// 使用
-		// var a = 1;
-		// var b = 2;
-		// 	testFun(function(){
-		// 		console.log(a,b)
-		// 	})(a,b)
-
 
 	// Export the Underscore object for **Node.js**, with
 	// backwards-compatibility for their old module API. If we're in
@@ -91,7 +71,6 @@
 	// (`nodeType` is checked to ensure that `module`
 	// and `exports` are not HTML elements.)
 	// 根据使用场景。决定_的暴露方式。
-	// 
 	if (typeof exports != 'undefined' && !exports.nodeType) {
 		if (typeof module != 'undefined' && !module.nodeType && module.exports) {
 			exports = module.exports = _;
@@ -116,6 +95,9 @@
 
 	//为遍历器绑定运行对象。将func中的this绑定到context对象上。以及在不同参数个数时的参数约定。
 	//accumulator累加器
+	//为什么不全部用apply而是前面几个用call呢。
+	//一方面是因为call的运行效率高于apply.参考：http://blog.csdn.net/zhengyinhui100/article/details/7837127
+	//另一方面也可以通过参数约定一下传入的几个值是什么。
 	var optimizeCb = function(func, context, argCount) {
 		if (context === void 0) return func;
 		switch (argCount) {
@@ -147,8 +129,10 @@
 	// element in a collection, returning the desired result — either `identity`,
 	// an arbitrary callback, a property matcher, or a property accessor.
 	// 内部方法。
+	// 这个方法的作用是给确保无论value传入的是什么类型的值，函数，对象，null等，都能把转换成一个函数以便进行迭代操作。
+
 	var cb = function(value, context, argCount) {
-		//检测iteratee是否被重定义了。？
+		//检测iteratee是否被重定义了。如果是，就按自定义的方法来处理。
 		if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
 		//第一个参数null。
 		if (value == null) return _.identity;
@@ -156,7 +140,7 @@
 		if (_.isFunction(value)) return optimizeCb(value, context, argCount);
 		//第一个参数是对象。返回一个函数检测是否含有其键值对。
 		if (_.isObject(value) && !_.isArray(value)) return _.matcher(value);
-		//返回一个函数，这个函数返回任何传入的对象的value属性。
+		//返回一个函数，这个函数返回任何传入的对象的value属性的值。
 		return _.property(value);
 	};
 
@@ -174,6 +158,7 @@
 	// This accumulates the arguments passed into an array, after a given index.
 	// 类似于es6中的rest参数。function fun(x,y,..z);  func(1,2,3,4,5)  x:1 y:2 z:[3,4,5]。即是把实参数量>=形参的部分放入一个数组中。
 	// 这里加了个参数startIndex。表示从第几个参数开始放入rest数组。返回新函数。
+	// 同理，这里的几个call的单独处理，也是对常见情况的高效率处理。因为call比apply运行速度快。
 	var restArgs = function(func, startIndex) {
 		startIndex = startIndex == null ? func.length - 1 : +startIndex;
 		return function() {
@@ -205,20 +190,16 @@
 
 	// An internal function for creating a new object that inherits from another.
 	// 继承。
+	// Ctor是一个内部定义的空函数。
 	var baseCreate = function(prototype) {
 		if (!_.isObject(prototype)) return {};
 		if (nativeCreate) return nativeCreate(prototype);
 		Ctor.prototype = prototype;
 		var result = new Ctor;
+		//用完了清理现场
 		Ctor.prototype = null;
 		return result;
 	};
-	//测试
-	// setTimeout(function(){
-	// 	var A = baseCreate({a:1});
-	// 	console.log(A);//{}
-	// 	console.log(A.a);//1
-	// }, 0);
 
 	//生成一个获取某个特定对象的函数。比如length;
 	var shallowProperty = function(key) {
