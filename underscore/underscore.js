@@ -191,6 +191,7 @@
 	// An internal function for creating a new object that inherits from another.
 	// 继承。
 	// Ctor是一个内部定义的空函数。
+	// 传入一个对象当做原型。
 	var baseCreate = function(prototype) {
 		if (!_.isObject(prototype)) return {};
 		if (nativeCreate) return nativeCreate(prototype);
@@ -207,6 +208,7 @@
 			return obj == null ? void 0 : obj[key];
 		};
 	};
+
 	//获取某个路径的值。路径的意思{d:2,a:{b:{c:1}}} 路径：[a,b,c] 值：1.
 	var deepGet = function(obj, path) {
 		var length = path.length;
@@ -228,6 +230,7 @@
 		var length = getLength(collection);
 		return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 	};
+
 
 	// Collection Functions
 	// --------------------
@@ -268,14 +271,6 @@
 		return results;
 	};
 
-
-	// 测试
-	// testFun(function(){
-	// 	return _.map({a:1,b:2,c:3},function(a){
-	// 		return a * this.d;
-	// 	},{d:5});
-	// })()
-
 	// Create a reducing function iterating left or right.
 	// 返回一个累加。从前往后或从后往前。
 	// dir>0。正向。否则反向。dir为迭代间隔
@@ -289,6 +284,7 @@
 			var keys = !isArrayLike(obj) && _.keys(obj),
 				length = (keys || obj).length,
 				index = dir > 0 ? 0 : length - 1;
+				//没有传递初始值。就把第一个值设为初始值，并且循环的index变化。
 			if (!initial) {
 				memo = obj[keys ? keys[index] : index];
 				index += dir;
@@ -302,6 +298,7 @@
 
 
 		return function(obj, iteratee, memo, context) {
+			// 如果参数数量大于等于3，说明传递了初始值。
 			var initial = arguments.length >= 3;
 			//这传递过去的绑定好context的遍历器。
 			return reducer(obj, optimizeCb(iteratee, context, 4), memo, initial);
