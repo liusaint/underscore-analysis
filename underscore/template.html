@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	
+
+	<script>
+debugger;
+var tmpl = (function(){
+    var cache = {};
+    var strip = function(html) {
+        return String(html)
+        .replace(/&/g, '&amp;')//&
+        .replace(/</g, '&lt;')//左尖号
+        .replace(/>/g, '&gt;')//右尖号
+        .replace(/"/g, '&quot;')//双引号"
+        .replace(/'/g, '&#039;');//IE下不支持&apos;'
+    }
+    return function(str, obj){debugger;
+        if (!typeof str === 'string') {
+            return;
+        }
+        var compile = cache[str];
+        if (!cache[str]) {
+            //var tm = str.replace(/<%=\s*([^%>]+)\s*%>/g, function() {
+            //    var key = arguments[1];
+            //    return "' + strip(" + key + ")";
+            //});
+            var tm = str.replace(/<%\s*([^=][^%>]*)\s*%>/g, function() {
+                var key = arguments[1];
+                return "';" + key + " tmp+='"; // 逻辑代码需要一块块的拼接起来，为的是拼接成一段合理的函数字符串传递给new Function
+            }).replace(/<%=\s*([^%>]+)\s*%>/g, function() {
+                var code = arguments[1];
+                return "' + strip(" + code + ") +'"; //利用escape包裹code ,加入模板逻辑时要注意，保证拼接成正确的函数字符串
+            }).replace(/<%=\s*([^%>]+)\s*%>/g, function() {
+                var key = arguments[1];
+                return "' + " + key + "+ '";//加入模板逻辑时要注意，保证拼接成正确的函数字符串
+            });debugger;
+            tm = "var tmp = \"\"; with(obj){ tmp = '" + tm + "'; } return tmp;"; //"'Hello' + obj.name"
+            compile = new Function('obj', 'strip', tm);
+            cache[str] = compile;
+        }
+        return compile(obj, strip); //预编译情况下应该返回compile函数
+    }
+}());
+
+var str = "<%for(var i = 0; i < 3; i++){%>name is <%= name%> <%}%>";
+var obj = {name: "<script>alert(\"XSS\")\</script\>"};
+tmpl(str, obj);
+
+
+// http://www.cnblogs.com/dojo-lzz/p/5518474.html
+</script>
+</body>
+</html>
