@@ -792,7 +792,7 @@
 
 	// Produce an array that contains every item shared between all the
 	// passed-in arrays.
-	// 并集
+	// 交集
 	_.intersection = function(array) {
 		var result = [];
 		var argsLength = arguments.length;
@@ -818,11 +818,12 @@
 	// 	}, 0)
 	_.difference = restArgs(function(array, rest) {
 
-		//比如 _.difference([1,2,3],[3,4],[1,4]);  通过restArgs函数变成 了([1,2,3],[[3,4],[1,4]]) 
+		//比如 _.difference([1,2,3],[3,4],[1,4],5);  通过restArgs函数变成 了([1,2,3],[[3,4],[1,4],5]) 
 		//所以要降维。把rest变成 [3,4,1,4]这样子。
 		//降维，只降一维。不保留原始类型的值，也就是说传入的参数不是array就不要这个参数。
 		rest = flatten(rest, true, true);
 		return _.filter(array, function(value) {
+			//返回没在rest中的值。
 			return !_.contains(rest, value);
 		});
 	});
@@ -887,6 +888,8 @@
 
 	// Use a comparator function to figure out the smallest index at which
 	// an object should be inserted so as to maintain order. Uses binary search.
+	// 使用二分查找确定value在list中的位置序号，value按此序号插入能保持list原有的排序
+	// _.sortedIndex(list, value, [iteratee], [context]) 
 	// 用一个比较函数算出最小的索引。插入一个有序数组。
 	// 使用二分法。
 	_.sortedIndex = function(array, obj, iteratee, context) {
@@ -907,23 +910,25 @@
 	// 如果fromIndex是负数，作为偏移量。
 	// 正向。如果算出来的小于0,则搜索整个数组。
 	// 反向。如果算出来的小于0,返回-1;
-	// idx可能是数字，也可能是布尔值。
-	// 是数字的时候表示fromIndex.布尔值的时候表示是isSorted
 
 	var createIndexFinder = function(dir, predicateFind, sortedIndex) {
 
+		// idx可能是数字，也可能是布尔值。
+		// 是数字的时候表示fromIndex.布尔值的时候表示是isSorted
 		return function(array, item, idx) {
 			var i = 0,
 				length = getLength(array);
+			//如果第三个参数是数字
 			if (typeof idx == 'number') {
+
 				if (dir > 0) {
 					i = idx >= 0 ? idx : Math.max(idx + length, i);
 				} else {
 					length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
 				}
-
+			//第三个参数是bool值，是否排序。
 			} else if (sortedIndex && idx && length) {
-				//这里这个判断是干嘛的???  判断如果item在array中能排到哪个位置。再用item与那个位置的值做比较。如果相等，说明在里面。
+				//判断如果item在array中能排到哪个位置。再用item与那个位置的值做比较。如果相等，说明在里面。
 				//不过有这个就没有fromIndex了
 				idx = sortedIndex(array, item);
 				return array[idx] === item ? idx : -1;
@@ -962,10 +967,12 @@
 	// 值得注意的是，如果stop值在start前面（也就是stop值小于start值），那么值域会被认为是零长度，而不是负增长。
 	// -如果你要一个负数的值域 ，请使用负数step.
 	_.range = function(start, stop, step) {
+		//参数转换　将_.range(3)转化成_.range(0,3)的效果。
 		if (stop == null) {
 			stop = start || 0;
 			start = 0;
 		}
+		//判断是正向还是逆向
 		if (!step) {
 			step = stop < start ? -1 : 1;
 		}
