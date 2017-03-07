@@ -284,7 +284,7 @@
 			var keys = !isArrayLike(obj) && _.keys(obj),
 				length = (keys || obj).length,
 				index = dir > 0 ? 0 : length - 1;
-				//没有传递初始值。就把第一个值设为初始值，并且循环的index变化。
+			//没有传递初始值。就把第一个值设为初始值，并且循环的index变化。
 			if (!initial) {
 				memo = obj[keys ? keys[index] : index];
 				index += dir;
@@ -383,11 +383,12 @@
 	//{d:2,a:{b:{c:1}}} 路径：[a,b,c]
 	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], 'sort'));
 	// console.log(_.invoke([{d:2,a:{b:function(a){return a }}}, {d:2,a:{b:function(a){return a+a}}}], ['a','b'],1));
-	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], alert)); error
+	// console.log(_.invoke([[5, 1, 7], [3, 2, 1]], function(){console.log(this[0])})); 
 
 	_.invoke = restArgs(function(obj, path, args) {
 
 		var contextPath, func;
+
 		if (_.isFunction(path)) {
 			func = path;
 		} else if (_.isArray(path)) {
@@ -396,6 +397,7 @@
 			//取最后一位
 			path = path[path.length - 1];
 		}
+		//把obj中的每一项当做回调中的context.
 		return _.map(obj, function(context) {
 			var method = func;
 			if (!method) {
@@ -410,6 +412,7 @@
 			return method == null ? method : method.apply(context, args);
 		});
 	});
+
 
 	// Convenience version of a common use case of `map`: fetching a property.
 	// pluck也许是map最常使用的用例模型的简化版本，即萃取对象数组中某属性值，返回一个数组。
@@ -533,6 +536,7 @@
 		var index = 0;
 		iteratee = cb(iteratee, context);
 		return _.pluck(_.map(obj, function(value, key, list) {
+			//这里返回的值包含了原始的value，也包含了计算后的值。
 			return {
 				value: value,
 				index: index++,
@@ -602,6 +606,10 @@
 	});
 
 	var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
+	//???对这个正则的解释，以及字符编码的问题，可以看这里：https://www.zhihu.com/question/38324041
+	//
+
+
 	// Safely create a real, live array from anything iterable.
 	// 把一个可迭代的东西转成array.如果原来是则返回一个新的。
 	_.toArray = function(obj) {
@@ -609,6 +617,7 @@
 		if (_.isArray(obj)) return slice.call(obj);
 		if (_.isString(obj)) {
 			// Keep surrogate pair characters together???
+			//字符串变数组 'hello'=>['h','e','l','l','0'];
 			return obj.match(reStrSymbol);
 		}
 		if (isArrayLike(obj)) return _.map(obj, _.identity);
@@ -685,21 +694,34 @@
 
 	// Internal implementation of a recursive `flatten` function.
 	// 降维。
+	// 
+	/**
+	 * [flatten description]
+	 * @param  {[type]} input   [要降维的数组]
+	 * @param  {[type]} shallow [如果为true的话表示只降一维]
+	 * @param  {[type]} strict  [如果为true的话，表示只要展开的项，不要无法展开的基本类型。通常与shallow，true一起使用]
+	 * @param  {[type]} output  [需要注意output。传入的是对象。作为引用类型，递归的函数内修改了它，所有的它的都修改了。]
+	 * @return {[type]}         [description]
+	 */
 	var flatten = function(input, shallow, strict, output) {
 		output = output || [];
 		var idx = output.length;
 		for (var i = 0, length = getLength(input); i < length; i++) {
 			var value = input[i];
+			//对数组值的处理。分为降多维和降一维两种处理。
 			if (isArrayLike(value) && (_.isArray(value) || _.isArguments(value))) {
 				// Flatten current level of array or arguments object.
+				// shallow为true的话只降一维。默认false.
 				if (shallow) {
 					var j = 0,
 						len = value.length;
 					while (j < len) output[idx++] = value[j++];
 				} else {
+					// 递归调用。将vue值降维。
 					flatten(value, shallow, strict, output);
 					idx = output.length;
 				}
+				//对基础类型的处理。是否保留基础类型的值。
 			} else if (!strict) {
 				output[idx++] = value;
 			}
@@ -708,7 +730,7 @@
 	};
 
 	// Flatten out an array, either recursively (by default), or just one level.
-	// 降维。默认降至一维。shallow参数为true，则只降一维。
+	// 降维。默认降至一维，降到底。shallow参数为true，则只降一维。
 	_.flatten = function(array, shallow) {
 		return flatten(array, shallow, false);
 	};
@@ -790,9 +812,15 @@
 	// Take the difference between one array and a number of other arrays.
 	// Only the elements present in just the first array will remain.
 	// 比较两个数组中的值。只在第一个数组不在第二个的能留下。差集？
+
+	// setTimeout(function() {
+	// 		console.log(_.difference([1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2], [7, 8], 9));
+	// 	}, 0)
 	_.difference = restArgs(function(array, rest) {
-		//???这里为什么要降维？  比如 _.difference([1,2,3],[3,4],[1,4]);  通过rest函数变成 了（[1,2,3],[[3,4],[1,4]]))
+
+		//比如 _.difference([1,2,3],[3,4],[1,4]);  通过restArgs函数变成 了([1,2,3],[[3,4],[1,4]]) 
 		//所以要降维。把rest变成 [3,4,1,4]这样子。
+		//降维，只降一维。不保留原始类型的值，也就是说传入的参数不是array就不要这个参数。
 		rest = flatten(rest, true, true);
 		return _.filter(array, function(value) {
 			return !_.contains(rest, value);
