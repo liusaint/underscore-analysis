@@ -926,7 +926,7 @@
 				} else {
 					length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;
 				}
-			//第三个参数是bool值，是否排序。
+				//第三个参数是bool值，是否排序。
 			} else if (sortedIndex && idx && length) {
 				//判断如果item在array中能排到哪个位置。再用item与那个位置的值做比较。如果相等，说明在里面。
 				//不过有这个就没有fromIndex了
@@ -1025,7 +1025,7 @@
 
 		//当构造函数调用　new。
 		//为啥不直接　return new sourceFunc()?应该是考虑参数问题，使用apply可以让args的内容运行时在正确的参数位。
-		
+
 		//__proto__指向sourceFunc.prototype的空对象，没有绑定sourceFunc中赋予到this上的值。
 		//相当于是一个没有绑定sourceFunc中的this...的实例。
 		var self = baseCreate(sourceFunc.prototype);
@@ -1040,18 +1040,6 @@
 		if (_.isObject(result)) return result;
 		return self;
 	};
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1075,9 +1063,12 @@
 	// arguments pre-filled, without changing its dynamic `this` context. _ acts
 	// as a placeholder by default, allowing any combination of arguments to be
 	// pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.
-	// 偏函数与函数柯里化？
-	// 局部应用一个函数填充在任意个数的 arguments，不改变其动态this值。和bind方法很相近。你可以传递_ 给arguments列表来指定一个不预先填充，但在调用时提供的参数。
-	// 返回一个函数。预先填充一些参数。对于不用填充的参数位置，使用_占位。
+
+	// 1.你可以传递_ 给arguments列表来指定一个不预先填充，但在调用时提供的参数。
+	//　第一次传入部分参数，任意位的，可用_占位，表示这个参数需要第二次传，第二次传递_占位的参数。
+	// 2.完整运行时使用第一次调用时的this值。
+
+
 	// 实际运行的时候，会把两次传递的参数拼成一个参数，然后再运行。
 	// var add = function(a, b,c,d,e) { return a+b+c+d+e; };
 	//  add20 = _.partial(add, _, 2,_,4,_);
@@ -1094,7 +1085,9 @@
 				length = boundArgs.length;
 			//第一次传入的参数的长度。
 			var args = Array(length);
-
+			//判断第几位使用哪个值。
+			//如果第一次该位传入的_，则使用arguments中的。
+			//反之，使用第一次的。
 			for (var i = 0; i < length; i++) {
 				args[i] = boundArgs[i] === placeholder ? arguments[position++] : boundArgs[i];
 			}
@@ -1109,7 +1102,7 @@
 	// Bind a number of an object's methods to that object. Remaining arguments
 	// are the method names to be bound. Useful for ensuring that all callbacks
 	// defined on an object belong to it.
-	// 将多个方法绑定到obj上。注意传入的参数是obj中的函数名。
+	// 将多个方法绑定到obj上运行。注意传入的参数是obj中的函数名。
 	// 	window.a = 'a in global';
 	// var obj = {
 	// 	a: 'a in obj',
@@ -1158,6 +1151,7 @@
 	_.memoize = function(func, hasher) {
 		var memoize = function(key) {
 			var cache = memoize.cache;
+			//如果传入了自定义的函数来生成key就用自定义的。否则用第一个参数当做缓存的key
 			var address = '' + (hasher ? hasher.apply(this, arguments) : key);
 			if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
 			return cache[address];
@@ -1186,34 +1180,38 @@
 	// but if you'd like to disable the execution on the leading edge, pass
 	// `{leading: false}`. To disable execution on the trailing edge, ditto.
 	// 默认立即执行，{leading: false}过一个wait时间后执行。
-	// 如果禁用最后一次执行，是不会使用timer的。触发方式是每次调用函数。判断与上次执行的时间差。也就是对函数的调用一停止,就不会有下一次执行了。
+	// 如果禁用最后一次执行，是不会使用timer的。
+	// 触发方式是每次调用函数。判断与上次执行的时间差。也就是对函数的调用一停止,就不会有下一次执行了。
 	// 不禁用的话。每次执行函数。就会生成一个timer。并清除上一个timer。
 	// 计算下次执行还有多少时间。所以在两次间隔之间调用函数，然后停止调用函数，等到时间间隔到了，还会执行一次。
-	// 节流
+	// 节流。顾名思义。控制频率。
 	_.throttle = function(func, wait, options) {
 		var timeout, context, args, result;
 		// 上次运行的时间戳
 		var previous = 0;
 		if (!options) options = {};
 
+		//这个函数是用于最后一次执行。停止触发之后，还会执行一次。
 		var later = function() {
 			previous = options.leading === false ? 0 : _.now();
 			timeout = null;
 			result = func.apply(context, args);
+			//这里似乎不用判断了
 			if (!timeout) context = args = null;
 		};
 
 		var throttled = function() {
 			var now = _.now();
-			//第一次运行的时候会判断。
+			//第一次运行的时候会判断。禁用第一次首先执行的话，传递{leading: false}
 			if (!previous && options.leading === false) previous = now;
+
 			var remaining = wait - (now - previous);
 			context = this;
 			args = arguments;
 			//remaining>wait表示系统时间调整过，时间异常的情况
 			//另外这个里面的执行并不是执行timer。而是把timer里的内容直接在里面执行一遍。主要是考虑到不设置timer的情况下。
 			if (remaining <= 0 || remaining > wait) {
-				console.log(timeout, 'timeout')
+
 				if (timeout) {
 					clearTimeout(timeout);
 					timeout = null;
@@ -1221,9 +1219,11 @@
 				previous = now;
 				result = func.apply(context, args);
 				if (!timeout) context = args = null;
-
+				
+				//默认的情况是如果连续触发之后停止触发，会设置一个timer，时间到了之后再执行一次。
+				//如果你想禁用最后一次执行的话，传递{trailing: false}
 			} else if (!timeout && options.trailing !== false) {
-				console.log(11);
+
 				timeout = setTimeout(later, remaining);
 			}
 			return result;
@@ -1244,7 +1244,10 @@
 	// leading edge, instead of the trailing.
 	// 防反跳。对于连续多次触发的处理。
 	// 默认只有在触发间隔大于wait时才执行。两次触发时间相差大于wait，在前一次触发之后的wait时间执行。
+	// 比如拉伸浏览器窗口，拉完之后再进行一系列操作。而不是边拉边不断操作。　拉完的意思是，多少时间内没有继续拉。
+	
 	// 最后一个参数传递true。则是在第一次触发就执行。然后等待下一次触发间隔大于wait之后再触发时执行。
+	// 场景：按太快，不小心按了两次提交，第一次提交起作用，第二次不起作用。然后过了多少时间之后再按才有效果。
 	_.debounce = function(func, wait, immediate) {
 		var timeout, result;
 
@@ -1255,6 +1258,7 @@
 
 		var debounced = restArgs(function(args) {
 			if (timeout) clearTimeout(timeout);
+			//第一次触发就执行。
 			if (immediate) {
 				//如果当前有等待中的定时器，则callNow为false。没有则为true。
 				var callNow = !timeout;
@@ -1262,6 +1266,9 @@
 				timeout = setTimeout(later, wait);
 				//之前没有等待中的定时器，直接执行
 				if (callNow) result = func.apply(this, args);
+
+				//停止触发之后才执行。设置个定时器延迟执行。不断删除旧的定时器，直到不再触发，生成新的定时器，
+				//就可以执行到定时器中的内容。
 			} else {
 				//使用delay，可以传递参数到定时器中
 				timeout = _.delay(later, wait, this, args);
