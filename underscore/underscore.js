@@ -1008,24 +1008,58 @@
 	// Determines whether to execute a function as a constructor
 	// or a normal function with the provided arguments.
 	// 决定按构造器还是按普通函数执行。
-
+	/**
+	 * 
+	 * @param  {[type]} sourceFunc     [原函数]
+	 * @param  {[type]} boundFunc      [绑定后的函数]
+	 * @param  {[type]} context        [绑定的对象]
+	 * @param  {[type]} callingContext [运行对象（this）]
+	 * @param  {[type]} args           [传入的参数]
+	 * @return {[type]}                [description]
+	 */
 	var executeBound = function(sourceFunc, boundFunc, context, callingContext, args) {
 		// 如果callingContext不是boundFunc的实例。运行sourceFunc.
-		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用.		
+		// callingContext instanceof boundFunc是判断以new _.bind()() 方式调用.	
 
 		if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
+
+		//当构造函数调用　new。
+		//为啥不直接　return new sourceFunc()?应该是考虑参数问题，使用apply可以让args的内容运行时在正确的参数位。
+		
+		//__proto__指向sourceFunc.prototype的空对象，没有绑定sourceFunc中赋予到this上的值。
+		//相当于是一个没有绑定sourceFunc中的this...的实例。
 		var self = baseCreate(sourceFunc.prototype);
-		//有些函数是直接返回obj。
+
+		//这里的sourceFunc是直接调用。而不是new调用。只是绑定在了self实例上。
+		//所以sourceFunc中的this指向self。给this添加的属性绑定到self上去。
+		//如果sourceFunc返回了非null的对象。那么它就是最后的返回值。
+		//如果sourceFunc返回的不是对象，返回它已变成sourceFunc的实例的self。
+
 		var result = sourceFunc.apply(self, args);
+
 		if (_.isObject(result)) return result;
 		return self;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Create a function bound to a given object (assigning `this`, and arguments,
 	// optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
 	// available.
 	// 创造一个绑定在给的对象上运行的函数。
-	// js原生的bind函数。　使用new的时候绑定的对象是无效的。
+	// 注意：es5原生的bind函数。　使用new，当构造函数使用时，绑定的对象是无效的。
 	_.bind = restArgs(function(func, context, args) {
 
 		if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
