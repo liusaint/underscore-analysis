@@ -1415,7 +1415,7 @@
 
 	// Returns the results of applying the iteratee to each element of the object.
 	// In contrast to _.map it returns an object.
-	// 类似于_.map不同的是它的返回的是object
+	// 类似于_.map不同的是它的返回的是object。转换每个属性的值。
 	_.mapObject = function(obj, iteratee, context) {
 		iteratee = cb(iteratee, context);
 		var keys = _.keys(obj),
