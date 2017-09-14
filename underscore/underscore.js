@@ -1257,6 +1257,7 @@
 		};
 
 		var debounced = restArgs(function(args) {
+			//这里只是clear，让定时器不执行，但是timer是一个数字，这个数字是依然存在的。
 			if (timeout) clearTimeout(timeout);
 			//第一次触发就执行。
 			if (immediate) {
