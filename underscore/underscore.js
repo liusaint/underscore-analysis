@@ -847,6 +847,8 @@
 	// Zip together multiple lists into a single array -- elements that share
 	// an index go together.
 	// 多个参数变成一个。
+	// zip与unzip做的事情其实是一样的。都是把同一个index的放到一个数组中。
+	// 区别在于zip的参数是多个数组，unzip的参数是一个数组。结果是一样的。
 	_.zip = restArgs(_.unzip);
 
 	// Converts lists into objects. Pass either a single array of `[key, value]`
