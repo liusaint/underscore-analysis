@@ -833,12 +833,13 @@
 	// 将 每个arrays中相应位置的值合并在一起。
 	// 在合并分开保存的数据时很有用. 如果你用来处理矩阵嵌套数组时, _.zip.apply 可以做类似的效果。
 	_.unzip = function(array) {
-		//以最大的一个的长度为length
+		//以最长的一个子数组的长度为length
+		//也就是说结果中子数组的数量的个数由最长的一个子数组来决定。
 		var length = array && _.max(array, getLength).length || 0;
 		var result = Array(length);
 
 		for (var index = 0; index < length; index++) {
-			//???注意_.pluck
+			//注意_.pluck。选择相同index的放入一个数组。
 			result[index] = _.pluck(array, index);
 		}
 		return result;
